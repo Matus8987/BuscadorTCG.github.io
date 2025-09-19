@@ -1,0 +1,238 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #2e2e2e;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.page-wrapper {
+  width: 95%;
+  max-width: 960px;
+  background-color: #4b4848;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 15px rgb(0 0 0 / 0.15);
+  display: flex;
+  flex-direction: column;
+  min-height: 80vh;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-weight: 700;
+  font-family: 'Pokemon Solid', sans-serif;
+  -webkit-text-stroke: 1px rgb(255, 255, 255); 
+}
+
+.paginacion {
+  color: white;
+  font-weight: 700;
+}
+
+form {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+input[type="text"] {
+  padding: 10px;
+  border: 2px solid #cc0000;
+  border-radius: 5px;
+  font-size: 1rem;
+  flex-grow: 1;
+  min-width: 180px;
+  max-width: 300px;
+  transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus {
+  border-color: #2e2e2e;
+  outline: none;
+}
+
+button {
+  background-color: #cc0000;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  min-width: 100px;
+}
+
+button:hover,
+button:focus {
+  background-color: #2e2e2e;
+  outline: none;
+}
+
+#loading-message {
+  font-weight: 700;
+  color: #cc0000;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#cards-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, auto);
+  gap: 20px;
+  flex-grow: 1;
+  min-height: 420px; /* espacio para 2 filas */
+}
+
+.card {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgb(0 0 0 / 0.15);
+  padding: 15px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card:hover,
+.card:focus {
+  transform: scale(1.05);
+  outline: none;
+}
+
+.card img {
+  width: 150px;
+  height: auto;
+  border-radius: 5px;
+  margin-bottom: 12px;
+}
+
+.card .card-name {
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+  color: #cc0000;
+  text-align: center;
+}
+
+.card .card-type,
+.card .card-rarity,
+.card .card-set {
+  font-size: 0.9rem;
+  color: #2e2e2e;
+  margin-bottom: 4px;
+  text-align:center;
+}
+
+#pagination-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+#pagination-controls button {
+  padding: 8px 16px;
+  font-weight: 700;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #cc0000;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#pagination-controls button:disabled {
+  background-color: rgb(202, 202, 202);
+  cursor: not-allowed;
+  color: black;
+}
+
+#pagination-controls button:hover:not(:disabled),
+#pagination-controls button:focus:not(:disabled) {
+  background-color: #2e2e2e;
+  outline: none;
+}
+
+/* Modales */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal[aria-hidden="false"] {
+  display: flex;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 10px;
+  max-width: 420px;
+  width: 100%;
+  padding: 20px;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 0 20px #b5c6e1;
+  text-align: center;
+}
+
+#card-modal-image {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+#card-modal-close,
+#error-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 1.8rem;
+  background: none;
+  border: none;
+  color: #cc0000;
+  cursor: pointer;
+  font-weight: 700;
+  transition: color 0.3s ease;
+}
+
+#card-modal-close:hover,
+#card-modal-close:focus,
+#error-modal-close:hover,
+#error-modal-close:focus {
+  color: #2e2e2e;
+  outline: none;
+}
+
+.error-content {
+  max-width: 350px;
+}
