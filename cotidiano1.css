@@ -94,10 +94,10 @@ button:focus {
 #cards-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, auto);
   gap: 20px;
   flex-grow: 1;
-  min-height: 420px; /* espacio para 2 filas */
+  min-height: 300px;
+  justify-items: center;
 }
 
 .card {
@@ -110,6 +110,8 @@ button:focus {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  max-width: 300px;
 }
 
 .card:hover,
@@ -123,6 +125,7 @@ button:focus {
   height: auto;
   border-radius: 5px;
   margin-bottom: 12px;
+  max-width: 100%;
 }
 
 .card .card-name {
@@ -143,34 +146,7 @@ button:focus {
 }
 
 #pagination-controls {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-#pagination-controls button {
-  padding: 8px 16px;
-  font-weight: 700;
-  font-size: 1rem;
-  border: none;
-  border-radius: 5px;
-  background-color: #cc0000;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-#pagination-controls button:disabled {
-  background-color: rgb(202, 202, 202);
-  cursor: not-allowed;
-  color: black;
-}
-
-#pagination-controls button:hover:not(:disabled),
-#pagination-controls button:focus:not(:disabled) {
-  background-color: #2e2e2e;
-  outline: none;
+  display: none;
 }
 
 /* Modales */
@@ -235,4 +211,55 @@ button:focus {
 
 .error-content {
   max-width: 350px;
+}
+
+/* Media queries para responsividad */
+@media (max-width: 768px) {
+  .page-wrapper {
+    width: 98%;
+    padding: 15px;
+  }
+  
+  #cards-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  
+  form {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  input[type="text"] {
+    min-width: 250px;
+    max-width: 100%;
+  }
+  
+  button {
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-wrapper {
+    padding: 10px;
+  }
+  
+  #cards-container {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .card {
+    max-width: 100%;
+  }
+  
+  input[type="text"] {
+    min-width: 200px;
+  }
+  
+  .modal-content {
+    margin: 10px;
+    padding: 15px;
+  }
 }

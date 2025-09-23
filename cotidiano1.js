@@ -11,10 +11,6 @@ const loadingMessage = document.getElementById("loading-message");
 const progressBarWrapper = loadingMessage.nextElementSibling; // contenedor de la barra
 const loadingProgressBar = document.getElementById("loading-progress-bar");
 
-const prevBtn = document.getElementById("prev-page");
-const nextBtn = document.getElementById("next-page");
-const pageInfo = document.getElementById("page-info");
-
 // Elementos modal detalles de carta
 const cardModal = document.getElementById("card-modal");
 const cardModalTitle = document.getElementById("card-modal-title");
@@ -30,11 +26,6 @@ const errorModal = document.getElementById("error-modal");
 const errorModalMessage = document.getElementById("error-modal-message");
 const errorModalCloseBtn = document.getElementById("error-modal-close");
 
-// Variables para paginación y búsqueda
-let currentPage = 1;
-const pageSize = 6; // mostrar 6 cartas (3x2)
-let lastQuery = "";
-
 // Intervalo para animar barra progreso
 let progressInterval;
 
@@ -49,44 +40,38 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
-  // Reiniciar página y guardar texto de búsqueda
-  currentPage = 1;
-  lastQuery = query;
-
-  // Buscar cartas con la consulta y página actuales
-  await fetchCards(query, currentPage);
-});
-
-prevBtn.addEventListener("click", async () => {
-  if (currentPage > 1) {
-    currentPage--;
-    await fetchCards(lastQuery, currentPage);
-  }
-});
-
-nextBtn.addEventListener("click", async () => {
-  currentPage++;
-  await fetchCards(lastQuery, currentPage);
+  // Buscar todas las cartas con la consulta
+  await fetchAllCards(query);
 });
 
 // Función para iniciar animación barra progreso
-function startLoadingProgress(duration = 3000) {
+function startLoadingProgress() {
   loadingMessage.hidden = false;
   progressBarWrapper.hidden = false;
   loadingProgressBar.style.width = "0%";
   loadingProgressBar.setAttribute("aria-valuenow", "0");
-
-  let startTime = Date.now();
-
+  
+  // Animar hasta 90% mientras se cargan los datos
+  let percent = 0;
   progressInterval = setInterval(() => {
-    const elapsed = Date.now() - startTime;
-    let percent = Math.min((elapsed / duration) * 100, 100);
-    loadingProgressBar.style.width = percent + "%";
-    loadingProgressBar.setAttribute("aria-valuenow", percent.toFixed(0));
-    if (percent >= 100) {
-      clearInterval(progressInterval);
+    if (percent < 90) {
+      percent += 2;
+      loadingProgressBar.style.width = percent + "%";
+      loadingProgressBar.setAttribute("aria-valuenow", percent.toFixed(0));
     }
   }, 50);
+}
+
+// Función para completar la barra de progreso
+function completeLoadingProgress() {
+  clearInterval(progressInterval);
+  loadingProgressBar.style.width = "100%";
+  loadingProgressBar.setAttribute("aria-valuenow", "100");
+  
+  // Ocultar después de un breve momento
+  setTimeout(() => {
+    stopLoadingProgress();
+  }, 300);
 }
 
 // Función para detener animación barra progreso
@@ -96,20 +81,17 @@ function stopLoadingProgress() {
   clearInterval(progressInterval);
 }
 
-// Función para obtener cartas desde la API con búsqueda y paginación
-async function fetchCards(query, page) {
-  startLoadingProgress(3000); // animar barra 3 seg como estimado
+// Función para obtener todas las cartas desde la API
+async function fetchAllCards(query) {
+  startLoadingProgress();
   container.innerHTML = "";
 
-  const offset = (page - 1) * pageSize;
   let url = "";
-
-  // Si la consulta es un número, buscar por número exacto en nacional pokedex
+  
   if (/^\d+$/.test(query)) {
-    url = `${BASE_URL}?pageSize=${pageSize}&offset=${offset}&q=${encodeURIComponent(`nationalPokedexNumbers:${query}`)}`;
+    url = `${BASE_URL}?pageSize=250&q=${encodeURIComponent(`nationalPokedexNumbers:${query}`)}`;
   } else {
-    // Buscar por nombre con comodines para coincidencia parcial
-    url = `${BASE_URL}?pageSize=${pageSize}&offset=${offset}&q=${encodeURIComponent(`name:*${query}*`)}`;
+    url = `${BASE_URL}?pageSize=250&q=${encodeURIComponent(`name:*${query}*`)}`;
   }
 
   try {
@@ -117,34 +99,32 @@ async function fetchCards(query, page) {
       headers: { "X-Api-Key": API_KEY },
     });
 
-    // Manejar errores HTTP
     if (!response.ok) {
       throw new Error(`Error HTTP: ${response.status}`);
     }
 
     const data = await response.json();
 
-    stopLoadingProgress();
-
-    // Si no hay resultados mostrar mensaje error nombre mal escrito
     if (!data.data || data.data.length === 0) {
+      stopLoadingProgress();
       showErrorModal("Nombre incorrectamente escrito.");
-      updatePagination(0, page);
       return;
     }
 
-    displayCards(data.data);
-    updatePagination(data.totalCount || 0, page);
+    // Renderizar todas las cartas
+    await displayCards(data.data);
+    
+    // Completar barra de progreso después de renderizar
+    completeLoadingProgress();
 
   } catch (error) {
     stopLoadingProgress();
     showErrorModal(`Error al cargar las cartas: ${error.message}`);
-    updatePagination(0, page);
   }
 }
 
 // Función para mostrar cartas en la cuadrícula
-function displayCards(cards) {
+async function displayCards(cards) {
   container.innerHTML = "";
   const fragment = document.createDocumentFragment();
 
@@ -177,6 +157,21 @@ function displayCards(cards) {
   });
 
   container.appendChild(fragment);
+  
+  // Esperar a que las imágenes se carguen
+  const images = container.querySelectorAll('img');
+  const imagePromises = Array.from(images).map(img => {
+    return new Promise(resolve => {
+      if (img.complete) {
+        resolve();
+      } else {
+        img.onload = resolve;
+        img.onerror = resolve; // resolver incluso si hay error
+      }
+    });
+  });
+  
+  await Promise.all(imagePromises);
 }
 
 // Función para mostrar modal con información de carta
@@ -236,12 +231,64 @@ function showErrorModal(msg) {
   showModal(errorModal);
 }
 
+// Función para mostrar modal
+function showModal(modal) {
+  modal.setAttribute("aria-hidden", "false");
+  modal.style.display = "flex";
+  const closeBtn = modal.querySelector("button");
+  if (closeBtn) closeBtn.focus();
+  modal._previousActiveElement = document.activeElement;
+}
+
+// Función para cerrar modal
+function closeModal(modal) {
+  modal.setAttribute("aria-hidden", "true");
+  modal.style.display = "none";
+  if (modal._previousActiveElement) modal._previousActiveElement.focus();
+}
+
+// Eventos botones cerrar modal
+cardModalCloseBtn.addEventListener("click", () => closeModal(cardModal));
+errorModalCloseBtn.addEventListener("click", () => closeModal(errorModal));
+
+// Cerrar modales clic fuera o teclado Escape
+cardModal.addEventListener("click", (e) => { if (e.target === cardModal) closeModal(cardModal); });
+errorModal.addEventListener("click", (e) => { if (e.target === errorModal) closeModal(errorModal); });
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    if (cardModal.getAttribute("aria-hidden") === "false") closeModal(cardModal);
+    if (errorModal.getAttribute("aria-hidden") === "false") closeModal(errorModal);
+  }
+});
+
+// Función para mostrar modal de error con mensaje
+function showErrorModal(msg) {
+  errorModalMessage.innerHTML = msg;
+  showModal(errorModal);
+}
+
 // Actualizar botones paginación y texto info
 function updatePagination(totalCount, page) {
+  const paginationControls = document.getElementById("pagination-controls");
+  
+  // Calcular si realmente hay más cartas disponibles
+  const hasMoreCards = (page * pageSize) < totalCount && actualCardsReturned === pageSize;
   const totalPages = Math.ceil(totalCount / pageSize);
-  pageInfo.textContent = totalPages > 0 ? `Página ${page} de ${totalPages}` : "Sin resultados";
-  prevBtn.disabled = page <= 1;
-  nextBtn.disabled = page >= totalPages || totalPages === 0;
+  
+  // Solo mostrar controles si hay más de 6 cartas (más de 1 página)
+  if (totalCount > pageSize && (hasMoreCards || page > 1)) {
+    paginationControls.classList.add("show");
+    pageInfo.textContent = `Página ${page} de ${totalPages}`;
+    
+    // Deshabilitar botones según corresponda
+    prevBtn.disabled = page <= 1;
+    nextBtn.disabled = !hasMoreCards || page >= totalPages;
+  } else {
+    paginationControls.classList.remove("show");
+    pageInfo.textContent = totalCount > 0 ? `${totalCount} carta${totalCount !== 1 ? 's' : ''} encontrada${totalCount !== 1 ? 's' : ''}` : "Sin resultados";
+  }
+  
   prevBtn.setAttribute("aria-disabled", prevBtn.disabled);
   nextBtn.setAttribute("aria-disabled", nextBtn.disabled);
 }

@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Buscador Pokémon TCG</title>
   <link rel="stylesheet" href="cotidiano1.css" />
   <!-- Bootstrap CSS para barra de progreso -->
@@ -51,12 +51,10 @@
       <!-- Contenedor donde se mostrarán las cartas -->
       <section id="cards-container" aria-live="polite" aria-atomic="true"></section>
 
-      <!-- Controles para paginación -->
-      <nav id="pagination-controls" aria-label="Paginación">
-        <button id="prev-page" disabled aria-disabled="true">Anterior</button>
-        <span id="page-info" class="paginacion">Página 1</span>
-        <button id="next-page" disabled aria-disabled="true">Siguiente</button>
-      </nav>
+      <!-- Información de resultados -->
+      <div style="text-align: center; margin-top: 20px;">
+        <span id="results-info" class="paginacion" style="display: none;"></span>
+      </div>
     </main>
   </div>
 
