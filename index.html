@@ -32,6 +32,25 @@
         <button type="submit">Buscar</button>
       </form>
 
+      <!-- Controles de filtrado -->
+      <div id="filter-controls" style="display: none; text-align: center; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+          <div>
+            <label for="rarity-filter" style="color: white; font-weight: 700; margin-right: 5px;">Rareza:</label>
+            <select id="rarity-filter" style="padding: 5px; border-radius: 5px; border: 2px solid #cc0000;">
+              <option value="">Todas</option>
+            </select>
+          </div>
+          <div>
+            <label for="set-filter" style="color: white; font-weight: 700; margin-right: 5px;">Set:</label>
+            <select id="set-filter" style="padding: 5px; border-radius: 5px; border: 2px solid #cc0000;">
+              <option value="">Todos</option>
+            </select>
+          </div>
+          <button id="clear-filters" type="button" style="padding: 5px 10px; font-size: 0.9rem;">Limpiar Filtros</button>
+        </div>
+      </div>
+
       <!-- Contenedor para mensaje y barra de progreso -->
       <div id="loading-container" style="text-align:center; margin-bottom: 20px;">
         <div id="loading-message" hidden>Cargando cartas...</div>

@@ -1,17 +1,30 @@
-// Constantes con clave Api y URL base
+/**
+ * BUSCADOR POKÉMON TCG - CONFIGURACIÓN Y CONSTANTES
+ * Configuración de la API y URLs base para consultas HTTP
+ */
 const API_KEY = "9d508e02-69a0-43bf-ad98-8d073b3c19b2";
 const BASE_URL = "https://api.pokemontcg.io/v2/cards";
 
-// Elementos del DOM para consultas y resultados
+/**
+ * REFERENCIAS DOM - ELEMENTOS PRINCIPALES
+ * Cache de referencias a elementos DOM para optimizar consultas
+ */
 const container = document.getElementById("cards-container");
 const form = document.getElementById("search-form");
 const input = document.getElementById("search-input");
 
+// Elementos de interfaz de carga
 const loadingMessage = document.getElementById("loading-message");
-const progressBarWrapper = loadingMessage.nextElementSibling; // contenedor de la barra
+const progressBarWrapper = loadingMessage.nextElementSibling;
 const loadingProgressBar = document.getElementById("loading-progress-bar");
 
-// Elementos modal detalles de carta
+// Elementos de filtrado
+const filterControls = document.getElementById("filter-controls");
+const rarityFilter = document.getElementById("rarity-filter");
+const setFilter = document.getElementById("set-filter");
+const clearFiltersBtn = document.getElementById("clear-filters");
+
+// Elementos de modal - detalles de carta
 const cardModal = document.getElementById("card-modal");
 const cardModalTitle = document.getElementById("card-modal-title");
 const cardModalImage = document.getElementById("card-modal-image");
@@ -21,37 +34,73 @@ const cardModalSet = document.getElementById("card-modal-set");
 const cardModalInfo = document.getElementById("card-modal-info");
 const cardModalCloseBtn = document.getElementById("card-modal-close");
 
-// Elementos modal error
+// Elementos de modal - manejo de errores
 const errorModal = document.getElementById("error-modal");
 const errorModalMessage = document.getElementById("error-modal-message");
 const errorModalCloseBtn = document.getElementById("error-modal-close");
 
-// Intervalo para animar barra progreso
-let progressInterval;
+/**
+ * ESTADO DE LA APLICACIÓN
+ * Variables globales para manejo de estado y control de flujo
+ */
+let allLoadedCards = []; // Cache local de cartas cargadas desde API
+let progressInterval; // Handler para animación de barra de progreso
 
-// Eventos formularios y botones
-form.addEventListener("submit", async (e) => {
+/**
+ * INICIALIZACIÓN DE EVENT LISTENERS
+ * Configuración de manejadores de eventos para interacción del usuario
+ */
+form.addEventListener("submit", handleSearchSubmit);
+rarityFilter.addEventListener("change", applyFilters);
+setFilter.addEventListener("change", applyFilters);
+clearFiltersBtn.addEventListener("click", clearFilters);
+cardModalCloseBtn.addEventListener("click", () => closeModal(cardModal));
+errorModalCloseBtn.addEventListener("click", () => closeModal(errorModal));
+
+// Event listeners para cierre de modales
+cardModal.addEventListener("click", handleModalBackdropClick);
+errorModal.addEventListener("click", handleModalBackdropClick);
+document.addEventListener("keydown", handleGlobalKeydown);
+
+/**
+ * MANEJADORES DE EVENTOS PRINCIPALES
+ * Funciones que procesan las interacciones del usuario
+ */
+async function handleSearchSubmit(e) {
   e.preventDefault();
   const query = input.value.trim();
 
-  // Validar si el campo está vacío
   if (!query) {
     showErrorModal("Debe llenar el campo para buscar.");
     return;
   }
 
-  // Buscar todas las cartas con la consulta
   await fetchAllCards(query);
-});
+}
 
-// Función para iniciar animación barra progreso
+function handleModalBackdropClick(e) {
+  if (e.target === cardModal) closeModal(cardModal);
+  if (e.target === errorModal) closeModal(errorModal);
+}
+
+function handleGlobalKeydown(e) {
+  if (e.key === "Escape") {
+    if (cardModal.getAttribute("aria-hidden") === "false") closeModal(cardModal);
+    if (errorModal.getAttribute("aria-hidden") === "false") closeModal(errorModal);
+  }
+}
+
+/**
+ * CONTROL DE BARRA DE PROGRESO
+ * Sistema de feedback visual para operaciones asíncronas
+ */
 function startLoadingProgress() {
   loadingMessage.hidden = false;
   progressBarWrapper.hidden = false;
   loadingProgressBar.style.width = "0%";
   loadingProgressBar.setAttribute("aria-valuenow", "0");
   
-  // Animar hasta 90% mientras se cargan los datos
+  // Animación progresiva hasta 90% durante la carga de datos
   let percent = 0;
   progressInterval = setInterval(() => {
     if (percent < 90) {
@@ -62,37 +111,33 @@ function startLoadingProgress() {
   }, 50);
 }
 
-// Función para completar la barra de progreso
 function completeLoadingProgress() {
   clearInterval(progressInterval);
   loadingProgressBar.style.width = "100%";
   loadingProgressBar.setAttribute("aria-valuenow", "100");
   
-  // Ocultar después de un breve momento
+  // Delay para feedback visual antes de ocultar
   setTimeout(() => {
     stopLoadingProgress();
   }, 300);
 }
 
-// Función para detener animación barra progreso
 function stopLoadingProgress() {
   loadingMessage.hidden = true;
   progressBarWrapper.hidden = true;
   clearInterval(progressInterval);
 }
 
-// Función para obtener todas las cartas desde la API
+/**
+ * SERVICIOS DE API
+ * Funciones para comunicación con la API de Pokémon TCG
+ */
 async function fetchAllCards(query) {
   startLoadingProgress();
   container.innerHTML = "";
+  hideFilters();
 
-  let url = "";
-  
-  if (/^\d+$/.test(query)) {
-    url = `${BASE_URL}?pageSize=250&q=${encodeURIComponent(`nationalPokedexNumbers:${query}`)}`;
-  } else {
-    url = `${BASE_URL}?pageSize=250&q=${encodeURIComponent(`name:*${query}*`)}`;
-  }
+  const url = buildApiUrl(query);
 
   try {
     const response = await fetch(url, {
@@ -111,10 +156,14 @@ async function fetchAllCards(query) {
       return;
     }
 
-    // Renderizar todas las cartas
-    await displayCards(data.data);
+    // Procesamiento y renderizado de datos
+    allLoadedCards = data.data;
+    await displayCards(allLoadedCards);
     
-    // Completar barra de progreso después de renderizar
+    // Configuración de filtros UI
+    populateFilters(allLoadedCards);
+    showFilters();
+    
     completeLoadingProgress();
 
   } catch (error) {
@@ -123,42 +172,65 @@ async function fetchAllCards(query) {
   }
 }
 
-// Función para mostrar cartas en la cuadrícula
+function buildApiUrl(query) {
+  const baseParams = "pageSize=250";
+  const searchParam = /^\d+$/.test(query) 
+    ? `nationalPokedexNumbers:${query}` 
+    : `name:*${query}*`;
+  
+  return `${BASE_URL}?${baseParams}&q=${encodeURIComponent(searchParam)}`;
+}
+
+/**
+ * RENDERIZADO DE COMPONENTES
+ * Funciones para manipulación del DOM y presentación de datos
+ */
 async function displayCards(cards) {
   container.innerHTML = "";
   const fragment = document.createDocumentFragment();
 
   cards.forEach((card) => {
-    const article = document.createElement("article");
-    article.className = "card";
-    article.setAttribute("tabindex", "0");
-    article.setAttribute("role", "button");
-    article.setAttribute("aria-pressed", "false");
-    article.dataset.card = JSON.stringify(card);
-
-    article.innerHTML = `
-      <img src="${card.images?.small || ''}" alt="Imagen de ${card.name}" loading="lazy" />
-      <div class="card-name">${card.name}</div>
-      <div class="card-type "><strong>Tipo:</strong> ${card.types ? card.types.join(", ") : "Desconocido"}</div>
-      <div class="card-rarity"><strong>Rareza:</strong> ${card.rarity || "Desconocida"}</div>
-      <div class="card-set"><strong>Set:</strong> ${card.set?.name || "Desconocido"}</div>
-    `;
-
-    // Agregar eventos para abrir modal con información detallada
-    article.addEventListener("click", () => openCardModal(article));
-    article.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        openCardModal(article);
-      }
-    });
-
+    const article = createCardElement(card);
     fragment.appendChild(article);
   });
 
   container.appendChild(fragment);
   
-  // Esperar a que las imágenes se carguen
+  // Optimización: preload de imágenes antes de completar renderizado
+  await preloadCardImages();
+}
+
+function createCardElement(card) {
+  const article = document.createElement("article");
+  article.className = "card";
+  article.setAttribute("tabindex", "0");
+  article.setAttribute("role", "button");
+  article.setAttribute("aria-pressed", "false");
+  article.dataset.card = JSON.stringify(card);
+
+  article.innerHTML = `
+    <img src="${card.images?.small || ''}" alt="Imagen de ${card.name}" loading="lazy" />
+    <div class="card-name">${card.name}</div>
+    <div class="card-type"><strong>Tipo:</strong> ${card.types ? card.types.join(", ") : "Desconocido"}</div>
+    <div class="card-rarity"><strong>Rareza:</strong> ${card.rarity || "Desconocida"}</div>
+    <div class="card-set"><strong>Set:</strong> ${card.set?.name || "Desconocido"}</div>
+  `;
+
+  // Event delegation para interacción con cartas
+  article.addEventListener("click", () => openCardModal(article));
+  article.addEventListener("keydown", handleCardKeydown);
+
+  return article;
+}
+
+function handleCardKeydown(e) {
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    openCardModal(e.currentTarget);
+  }
+}
+
+async function preloadCardImages() {
   const images = container.querySelectorAll('img');
   const imagePromises = Array.from(images).map(img => {
     return new Promise(resolve => {
@@ -166,7 +238,7 @@ async function displayCards(cards) {
         resolve();
       } else {
         img.onload = resolve;
-        img.onerror = resolve; // resolver incluso si hay error
+        img.onerror = resolve; // Resolución robusta en caso de error
       }
     });
   });
@@ -174,121 +246,137 @@ async function displayCards(cards) {
   await Promise.all(imagePromises);
 }
 
-// Función para mostrar modal con información de carta
-function openCardModal(cardEl) {
+/**
+ * SISTEMA DE FILTRADO
+ * Implementación de filtros client-side para optimización de UX
+ */
+function populateFilters(cards) {
+  populateRarityFilter(cards);
+  populateSetFilter(cards);
+}
+
+function populateRarityFilter(cards) {
+  const rarities = [...new Set(cards.map(card => card.rarity).filter(Boolean))].sort();
+  rarityFilter.innerHTML = '<option value="">Todas</option>';
+  
+  rarities.forEach(rarity => {
+    const option = document.createElement("option");
+    option.value = rarity;
+    option.textContent = rarity;
+    rarityFilter.appendChild(option);
+  });
+}
+
+function populateSetFilter(cards) {
+  const sets = [...new Set(cards.map(card => card.set?.name).filter(Boolean))].sort();
+  setFilter.innerHTML = '<option value="">Todos</option>';
+  
+  sets.forEach(set => {
+    const option = document.createElement("option");
+    option.value = set;
+    option.textContent = set;
+    setFilter.appendChild(option);
+  });
+}
+
+function applyFilters() {
+  if (allLoadedCards.length === 0) return;
+
+  const selectedRarity = rarityFilter.value;
+  const selectedSet = setFilter.value;
+  
+  let filteredCards = allLoadedCards;
+
+  // Aplicación de filtros secuencial
+  if (selectedRarity) {
+    filteredCards = filteredCards.filter(card => card.rarity === selectedRarity);
+  }
+
+  if (selectedSet) {
+    filteredCards = filteredCards.filter(card => card.set?.name === selectedSet);
+  }
+
+  displayCards(filteredCards);
+  showFilteredInfo(filteredCards.length, allLoadedCards.length);
+}
+
+function clearFilters() {
+  rarityFilter.value = "";
+  setFilter.value = "";
+  displayCards(allLoadedCards);
+  hideFilteredInfo();
+}
+
+/**
+ * CONTROL DE VISIBILIDAD DE COMPONENTES UI
+ * Funciones para manejo de estado visual de elementos
+ */
+function showFilters() {
+  filterControls.style.display = "block";
+}
+
+function hideFilters() {
+  filterControls.style.display = "none";
+}
+
+function showFilteredInfo(filteredCount, totalCount) {
+  const resultsInfo = document.getElementById("results-info");
+  if (resultsInfo) {
+    resultsInfo.textContent = `Mostrando ${filteredCount} de ${totalCount} cartas`;
+    resultsInfo.style.display = "inline";
+  }
+}
+
+function hideFilteredInfo() {
+  const resultsInfo = document.getElementById("results-info");
+  if (resultsInfo) {
+    resultsInfo.style.display = "none";
+  }
+}
+
+/**
+ * SISTEMA DE MODALES
+ * Gestión de ventanas modales para detalles y errores
+ */
+function openCardModal(cardElement) {
   try {
-    // Obtener datos JSON de la carta del atributo data-card
-    const card = JSON.parse(cardEl.dataset.card);
-
-    cardModalTitle.textContent = card.name || "Desconocido";
-    cardModalImage.src = card.images?.large || card.images?.small || "";
-    cardModalImage.alt = `Imagen de ${card.name}`;
-    cardModalType.textContent = card.types ? card.types.join(", ") : "Desconocido";
-    cardModalRarity.textContent = card.rarity || "Desconocida";
-    cardModalSet.textContent = card.set?.name || "Desconocido";
-    cardModalInfo.textContent = card.text || card.rules?.join(", ") || "Información no disponible.";
-
+    const card = JSON.parse(cardElement.dataset.card);
+    populateCardModal(card);
     showModal(cardModal);
   } catch {
     showErrorModal("No se pudo abrir la información de la carta.");
   }
 }
 
-// Función para mostrar modal
+function populateCardModal(card) {
+  cardModalTitle.textContent = card.name || "Desconocido";
+  cardModalImage.src = card.images?.large || card.images?.small || "";
+  cardModalImage.alt = `Imagen de ${card.name}`;
+  cardModalType.textContent = card.types ? card.types.join(", ") : "Desconocido";
+  cardModalRarity.textContent = card.rarity || "Desconocida";
+  cardModalSet.textContent = card.set?.name || "Desconocido";
+  cardModalInfo.textContent = card.text || card.rules?.join(", ") || "Información no disponible.";
+}
+
 function showModal(modal) {
   modal.setAttribute("aria-hidden", "false");
   modal.style.display = "flex";
+  
+  // Gestión de foco para accesibilidad
   const closeBtn = modal.querySelector("button");
   if (closeBtn) closeBtn.focus();
   modal._previousActiveElement = document.activeElement;
 }
 
-// Función para cerrar modal
 function closeModal(modal) {
   modal.setAttribute("aria-hidden", "true");
   modal.style.display = "none";
+  
+  // Restauración de foco para navegación accesible
   if (modal._previousActiveElement) modal._previousActiveElement.focus();
 }
 
-// Eventos botones cerrar modal
-cardModalCloseBtn.addEventListener("click", () => closeModal(cardModal));
-errorModalCloseBtn.addEventListener("click", () => closeModal(errorModal));
-
-// Cerrar modales clic fuera o teclado Escape
-cardModal.addEventListener("click", (e) => { if (e.target === cardModal) closeModal(cardModal); });
-errorModal.addEventListener("click", (e) => { if (e.target === errorModal) closeModal(errorModal); });
-
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    if (cardModal.getAttribute("aria-hidden") === "false") closeModal(cardModal);
-    if (errorModal.getAttribute("aria-hidden") === "false") closeModal(errorModal);
-  }
-});
-
-// Función para mostrar modal de error con mensaje
-function showErrorModal(msg) {
-  errorModalMessage.innerHTML = msg;
+function showErrorModal(message) {
+  errorModalMessage.innerHTML = message;
   showModal(errorModal);
-}
-
-// Función para mostrar modal
-function showModal(modal) {
-  modal.setAttribute("aria-hidden", "false");
-  modal.style.display = "flex";
-  const closeBtn = modal.querySelector("button");
-  if (closeBtn) closeBtn.focus();
-  modal._previousActiveElement = document.activeElement;
-}
-
-// Función para cerrar modal
-function closeModal(modal) {
-  modal.setAttribute("aria-hidden", "true");
-  modal.style.display = "none";
-  if (modal._previousActiveElement) modal._previousActiveElement.focus();
-}
-
-// Eventos botones cerrar modal
-cardModalCloseBtn.addEventListener("click", () => closeModal(cardModal));
-errorModalCloseBtn.addEventListener("click", () => closeModal(errorModal));
-
-// Cerrar modales clic fuera o teclado Escape
-cardModal.addEventListener("click", (e) => { if (e.target === cardModal) closeModal(cardModal); });
-errorModal.addEventListener("click", (e) => { if (e.target === errorModal) closeModal(errorModal); });
-
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    if (cardModal.getAttribute("aria-hidden") === "false") closeModal(cardModal);
-    if (errorModal.getAttribute("aria-hidden") === "false") closeModal(errorModal);
-  }
-});
-
-// Función para mostrar modal de error con mensaje
-function showErrorModal(msg) {
-  errorModalMessage.innerHTML = msg;
-  showModal(errorModal);
-}
-
-// Actualizar botones paginación y texto info
-function updatePagination(totalCount, page) {
-  const paginationControls = document.getElementById("pagination-controls");
-  
-  // Calcular si realmente hay más cartas disponibles
-  const hasMoreCards = (page * pageSize) < totalCount && actualCardsReturned === pageSize;
-  const totalPages = Math.ceil(totalCount / pageSize);
-  
-  // Solo mostrar controles si hay más de 6 cartas (más de 1 página)
-  if (totalCount > pageSize && (hasMoreCards || page > 1)) {
-    paginationControls.classList.add("show");
-    pageInfo.textContent = `Página ${page} de ${totalPages}`;
-    
-    // Deshabilitar botones según corresponda
-    prevBtn.disabled = page <= 1;
-    nextBtn.disabled = !hasMoreCards || page >= totalPages;
-  } else {
-    paginationControls.classList.remove("show");
-    pageInfo.textContent = totalCount > 0 ? `${totalCount} carta${totalCount !== 1 ? 's' : ''} encontrada${totalCount !== 1 ? 's' : ''}` : "Sin resultados";
-  }
-  
-  prevBtn.setAttribute("aria-disabled", prevBtn.disabled);
-  nextBtn.setAttribute("aria-disabled", nextBtn.disabled);
 }
