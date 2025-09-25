@@ -23,7 +23,7 @@ function login() {
 
       setTimeout(() => {
         localStorage.setItem("currentUser", user);
-        window.location.href = "../Pagina Base/cotidiano1.html";
+        window.location.href = "../Pagina Base/BuscadorTCG.html";
       }, 800);
     }, 1500);
 
