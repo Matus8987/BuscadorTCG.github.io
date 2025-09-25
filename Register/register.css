@@ -14,10 +14,10 @@ body {
   
   .container {
     background: rgba(255, 255, 255, 0.95);
-    padding: 32px 28px 28px 28px;
+    padding: 40px 35px 35px 35px;
     border-radius: 18px;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.25);
-    width: 340px;
+    width: 30%;
     text-align: center;
     margin: 0 auto;
     transition: box-shadow 0.3s;

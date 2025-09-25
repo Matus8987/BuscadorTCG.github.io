@@ -380,3 +380,30 @@ function showErrorModal(message) {
   errorModalMessage.innerHTML = message;
   showModal(errorModal);
 }
+
+// Función para inicializar la página al cargar
+window.addEventListener('DOMContentLoaded', function() {
+  const currentUser = localStorage.getItem('currentUser');
+  
+  if (currentUser) {
+    // Mostrar barra de usuario
+    document.getElementById('currentUserName').textContent = currentUser;
+    document.getElementById('userBar').style.display = 'block';
+    
+    // Mostrar modal de bienvenida
+    document.getElementById('pageWelcomeUser').textContent = currentUser;
+    document.getElementById('pageWelcomeModal').style.display = 'flex';
+  } else {
+    // Redirigir al login si no hay usuario
+    window.location.href = '../index.html';
+  }
+});
+
+function closeWelcomeModal() {
+  document.getElementById('pageWelcomeModal').style.display = 'none';
+}
+
+function logout() {
+  localStorage.removeItem('currentUser');
+  window.location.href = '../index.html';
+}

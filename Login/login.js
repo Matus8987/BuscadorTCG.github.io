@@ -7,10 +7,34 @@ function login() {
   const storedPass = localStorage.getItem("pass");
 
   if (user === storedUser && pass === storedPass) {
-    document.getElementById("status").innerText = "✅ Bienvenido, " + user;
-    document.getElementById("status").style.color = "green";
+    // Mostrar modal de bienvenida
+    document.getElementById("welcomeUsername").textContent = user;
+    document.getElementById("welcomeModal").style.display = "flex";
+
+    // Animación de salida y redirección
+    setTimeout(() => {
+      const container = document.querySelector('.container');
+      const title = document.querySelector('.tituloh1');
+      const modal = document.getElementById('welcomeModal');
+      
+      container.style.animation = "fadeOut 0.8s forwards";
+      title.style.animation = "fadeOut 0.8s forwards";
+      modal.style.animation = "fadeOut 0.8s forwards";
+
+      setTimeout(() => {
+        localStorage.setItem("currentUser", user);
+        window.location.href = "../Pagina Base/cotidiano1.html";
+      }, 800);
+    }, 1500);
+
   } else {
-    document.getElementById("status").innerText = "❌ Usuario o contraseña incorrectos";
-    document.getElementById("status").style.color = "red";
+    // Crear elemento temporal para mostrar error
+    const errorMsg = document.createElement('div');
+    errorMsg.textContent = "❌ Usuario o contraseña incorrectos";
+    errorMsg.style.cssText = "color: red; text-align: center; margin-top: 15px; font-weight: bold;";
+    document.querySelector('.container').appendChild(errorMsg);
+    
+    setTimeout(() => errorMsg.remove(), 3000);
   }
 }
+
