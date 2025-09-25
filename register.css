@@ -1,0 +1,102 @@
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #232526 0%, #414345 100%);
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* Imagen de fondo */
+    background-image: url('fondo.jpg'); /* Cambia el nombre si tu imagen es diferente */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+  
+  .container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 32px 28px 28px 28px;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.25);
+    width: 340px;
+    text-align: center;
+    margin: 0 auto;
+    transition: box-shadow 0.3s;
+  }
+  
+  .container:hover {
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.35);
+  }
+  
+  h2 {
+    margin-top: 0;
+    color: #222;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 18px;
+  }
+  
+  input {
+    width: 92%;
+    padding: 12px;
+    margin: 18px 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    background: #f2f2f2;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+    transition: box-shadow 0.2s, border 0.2s;
+    outline: none;
+  }
+  
+  input:focus {
+    border: 1.5px solid #cc0000;
+    box-shadow: 0 2px 8px rgba(204,0,0,0.08);
+    background: #fff;
+  }
+  
+  button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 32px;
+    background: linear-gradient(90deg, #cc0000 60%, #ff9900 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 8px rgba(204,0,0,0.10);
+    transition: background 0.3s, transform 0.2s;
+  }
+  
+  button:hover {
+    background: linear-gradient(90deg, #ff9900 0%, #cc0000 100%);
+    transform: translateY(-2px) scale(1.03);
+  }
+  
+  #status {
+    margin-top: 18px;
+    font-weight: bold;
+    color: #cc0000;
+    min-height: 22px;
+  }
+  
+  /*Titulo*/
+  .tituloh1 {
+    font-family: 'Pokemon Solid', sans-serif;
+    -webkit-text-stroke: 2px #fff;
+    color: #232526;
+    font-size: 62px;
+    text-align: center;
+    margin-bottom: 36px;
+    letter-spacing: 2px;
+    text-shadow: 0 4px 18px rgba(0,0,0,0.18);
+    transition: text-shadow 0.3s;
+  }
+  
+  .tituloh1:hover {
+    text-shadow: 0 8px 32px rgba(204,0,0,0.18);
+  }
