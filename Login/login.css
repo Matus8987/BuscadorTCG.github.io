@@ -17,7 +17,7 @@ body {
     padding: 40px 35px 35px 35px;
     border-radius: 18px;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.25);
-    width: 30%;
+    width: 400px;
     text-align: center;
     margin: 0 auto;
     transition: box-shadow 0.3s;
@@ -38,7 +38,7 @@ body {
   input {
     width: 92%;
     padding: 12px;
-    margin: 18px 0;
+    margin: 18px 0 !important;
     border: none;
     border-radius: 8px;
     font-size: 15px;
@@ -55,18 +55,18 @@ body {
   }
   
   button {
-    width: 100%;
+    width: 70%;
     padding: 12px;
-    margin-top: 32px;
+    margin-top: 48px !important; /* Forzar aplicación del margen */
     background: linear-gradient(90deg, #cc0000 60%, #ff9900 100%);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 15px !important; /* Forzar aplicación del border-radius */
     cursor: pointer;
     font-size: 16px;
     font-weight: 600;
     letter-spacing: 1px;
-    box-shadow: 0 2px 8px rgba(204,0,0,0.10);
+    box-shadow: 0 2px 8px rgba(204, 0, 0, 0.10);
     transition: background 0.3s, transform 0.2s;
   }
   
@@ -157,4 +157,28 @@ body {
 .welcome-modal p {
     color: #666;
     margin: 0;
+}
+
+.register-link {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.register-link p {
+  color: #fff;
+  font-size: 14px;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.register-link a {
+  color: #ff9900;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+.register-link a:hover {
+  color: #cc0000;
+  text-decoration: underline;
 }

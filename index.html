@@ -3,18 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>Register con Local Storage TCG</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="Register/register.css">
     <script src="Register/register.js" defer></script>
     <link href="https://fonts.cdnfonts.com/css/pokemon-solid" rel="stylesheet">
 </head>
 <body>
     <h1 class="tituloh1">Buscador de Cartas TCG</h1>
-    <div class="container">
+    <div class="container col-md-4 col-lg-3">
         <h2>Registro</h2>
         <input type="text" id="regUser" placeholder="Usuario">
         <input type="password" id="regPass" placeholder="Contraseña">
         <button onclick="register()">Registrar</button>
         <div id="status"></div>
+    </div>
+
+    <div class="login-link">
+        <p>¿Ya tienes una cuenta? <a href="Login/login.html">Inicia Sesión</a></p>
     </div>
 </body>
 </html>
