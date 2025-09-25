@@ -15,7 +15,7 @@ function register() {
         title.style.animation = "fadeOut 0.8s forwards";
 
         setTimeout(() => {
-            window.location.href = "../Login/login.html";
+            window.location.href = "Login/login.html";
         }, 800);
     } else {
       alert("⚠️ Complete todos los campos");
