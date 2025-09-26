@@ -23,7 +23,7 @@ function login() {
 
       setTimeout(() => {
         localStorage.setItem("currentUser", user);
-        window.location.href = "../Pagina Base/BuscadorTCG.html";
+        window.location.href = "../Cartas de Pokemon/BuscadorTCG.html";
       }, 800);
     }, 1500);
 

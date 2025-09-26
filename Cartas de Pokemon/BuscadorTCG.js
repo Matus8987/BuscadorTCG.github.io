@@ -95,36 +95,36 @@ function handleGlobalKeydown(e) {
  * Sistema de feedback visual para operaciones asíncronas
  */
 function startLoadingProgress() {
-  loadingMessage.hidden = false;
-  progressBarWrapper.hidden = false;
-  loadingProgressBar.style.width = "0%";
-  loadingProgressBar.setAttribute("aria-valuenow", "0");
+  const loadingContainer = document.getElementById("loading-container");
+  const loadingProgressBar = document.getElementById("loading-progress-bar");
   
-  // Animación progresiva hasta 90% durante la carga de datos
-  let percent = 0;
-  progressInterval = setInterval(() => {
-    if (percent < 90) {
-      percent += 2;
-      loadingProgressBar.style.width = percent + "%";
-      loadingProgressBar.setAttribute("aria-valuenow", percent.toFixed(0));
-    }
-  }, 50);
+  loadingContainer.style.display = "block";
+  loadingProgressBar.style.width = "0%";
+  loadingProgressBar.textContent = "0%";
+  loadingProgressBar.parentElement.setAttribute("aria-valuenow", "0");
+}
+
+function updateProgress(percentage) {
+  const loadingProgressBar = document.getElementById("loading-progress-bar");
+  const progressContainer = loadingProgressBar.parentElement;
+  
+  loadingProgressBar.style.width = percentage + "%";
+  loadingProgressBar.textContent = Math.round(percentage) + "%";
+  progressContainer.setAttribute("aria-valuenow", Math.round(percentage));
 }
 
 function completeLoadingProgress() {
-  clearInterval(progressInterval);
-  loadingProgressBar.style.width = "100%";
-  loadingProgressBar.setAttribute("aria-valuenow", "100");
+  updateProgress(100);
   
-  // Delay para feedback visual antes de ocultar
+  // Ocultar después de un breve delay
   setTimeout(() => {
     stopLoadingProgress();
-  }, 300);
+  }, 500);
 }
 
 function stopLoadingProgress() {
-  loadingMessage.hidden = true;
-  progressBarWrapper.hidden = true;
+  const loadingContainer = document.getElementById("loading-container");
+  loadingContainer.style.display = "none";
   clearInterval(progressInterval);
 }
 
@@ -140,6 +140,9 @@ async function fetchAllCards(query) {
   const url = buildApiUrl(query);
 
   try {
+    // Progreso inicial
+    updateProgress(10);
+    
     const response = await fetch(url, {
       headers: { "X-Api-Key": API_KEY },
     });
@@ -148,6 +151,9 @@ async function fetchAllCards(query) {
       throw new Error(`Error HTTP: ${response.status}`);
     }
 
+    // Progreso tras recibir respuesta
+    updateProgress(30);
+    
     const data = await response.json();
 
     if (!data.data || data.data.length === 0) {
@@ -156,13 +162,26 @@ async function fetchAllCards(query) {
       return;
     }
 
+    // Progreso tras procesar datos
+    updateProgress(50);
+    
     // Procesamiento y renderizado de datos
     allLoadedCards = data.data;
+    
+    // Progreso durante renderizado
+    updateProgress(70);
+    
     await displayCards(allLoadedCards);
+    
+    // Progreso tras renderizar cartas
+    updateProgress(85);
     
     // Configuración de filtros UI
     populateFilters(allLoadedCards);
     showFilters();
+    
+    // Progreso completo
+    updateProgress(95);
     
     completeLoadingProgress();
 
@@ -188,15 +207,22 @@ function buildApiUrl(query) {
 async function displayCards(cards) {
   container.innerHTML = "";
   const fragment = document.createDocumentFragment();
+  const totalCards = cards.length;
 
-  cards.forEach((card) => {
+  cards.forEach((card, index) => {
     const article = createCardElement(card);
     fragment.appendChild(article);
+    
+    // Actualizar progreso durante la creación de elementos
+    const cardProgress = Math.min(70 + (index / totalCards) * 15, 85);
+    if (index % 10 === 0 || index === totalCards - 1) { // Actualizar cada 10 cartas o en la última
+      updateProgress(cardProgress);
+    }
   });
 
   container.appendChild(fragment);
   
-  // Optimización: preload de imágenes antes de completar renderizado
+  // Optimización: preload de imágenes más rápido
   await preloadCardImages();
 }
 
@@ -333,7 +359,7 @@ function hideFilteredInfo() {
     resultsInfo.style.display = "none";
   }
 }
-
+/*FIN DE SISTEMA DE FILTRADO */
 /**
  * SISTEMA DE MODALES
  * Gestión de ventanas modales para detalles y errores

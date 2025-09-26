@@ -3,6 +3,11 @@
 }
 
 body {
+  background-image: url('../Imagenes/FondoOscuro2.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-image: no-repeat !important;
   margin: 0;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   color: #2e2e2e;
@@ -16,7 +21,7 @@ body {
 .page-wrapper {
   width: 95%;
   max-width: 960px;
-  background-color: #4b4848;
+  background-color: rgba(52, 64, 73, 0.8);
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 0 15px rgb(0 0 0 / 0.15);
@@ -51,7 +56,7 @@ form {
 
 input[type="text"] {
   padding: 10px;
-  border: 2px solid #cc0000;
+  border: 2px solid #cc9e00;
   border-radius: 5px;
   font-size: 1rem;
   flex-grow: 1;
@@ -61,12 +66,12 @@ input[type="text"] {
 }
 
 input[type="text"]:focus {
-  border-color: #2e2e2e;
+  border-color: #cc9e00;
   outline: none;
 }
 
 button {
-  background-color: #cc0000;
+  background-color: #bb5d00;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -132,7 +137,7 @@ button:focus {
   font-weight: 700;
   font-size: 1.2rem;
   margin-bottom: 6px;
-  color: #cc0000;
+  color: #bb5d00;
   text-align: center;
 }
 
@@ -167,7 +172,7 @@ button:focus {
 #filter-controls select {
   padding: 8px;
   border-radius: 5px;
-  border: 2px solid #cc0000;
+  border: 2px solid #cc9e00;
   background-color: white;
   color: #2e2e2e;
   font-size: 0.9rem;
@@ -236,7 +241,7 @@ button:focus {
   font-size: 1.8rem;
   background: none;
   border: none;
-  color: #cc0000;
+  color: #000000;
   cursor: pointer;
   font-weight: 700;
   transition: color 0.3s ease;
