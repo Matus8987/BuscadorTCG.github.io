@@ -11,6 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
     nameSpan.textContent = currentUser;
     userBar.style.display = 'block';
   }
+  
+  // Muestra el nombre en el panel
+  const panelUsuario = document.querySelector('#nombreUsuario');
+  if (panelUsuario) {
+    panelUsuario.textContent = currentUser;
+  }
 });
 
 // Cerrar sesión
