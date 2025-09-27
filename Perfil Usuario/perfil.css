@@ -1,0 +1,20 @@
+/* Estilos para el navbar */
+.navbar {
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  z-index: 999;
+  background-color: rgba(29, 29, 61, 0.9) !important;
+}
+
+.navbar-brand {
+  font-weight: 700 !important;
+  color: #bb5d00 !important;
+}
+
+.navbar-nav .nav-link {
+  font-weight: 600;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #bb5d00 !important;
+}
+/* Fin estilos navbar */

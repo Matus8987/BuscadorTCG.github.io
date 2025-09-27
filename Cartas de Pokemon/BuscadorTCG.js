@@ -1,6 +1,10 @@
 /**
  * BUSCADOR POKÉMON TCG - CONFIGURACIÓN Y CONSTANTES
  * Configuración de la API y URLs base para consultas HTTP
+ * 
+ * NOTA: Si aparece el error "PSL: Preferences API does not have background_setting_preferences"
+ * en la consola, es un error interno del navegador (Edge/Chrome) y no afecta la funcionalidad
+ * de esta aplicación. Puedes ignorarlo de forma segura.
  */
 const API_KEY = "9d508e02-69a0-43bf-ad98-8d073b3c19b2"; // Clave de API de Pokémon TCG 
 const BASE_URL = "https://api.pokemontcg.io/v2/cards"; // Endpoint base de la API de Pokémon TCG 
@@ -416,9 +420,23 @@ window.addEventListener('DOMContentLoaded', function() {
     document.getElementById('currentUserName').textContent = currentUser;
     document.getElementById('userBar').style.display = 'block';
     
-    // Mostrar modal de bienvenida
-    document.getElementById('pageWelcomeUser').textContent = currentUser;
-    document.getElementById('pageWelcomeModal').style.display = 'flex';
+    // Solo mostrar modal de bienvenida si es la primera vez en esta sesión
+    // y no viene de navegación interna del sitio
+    const hasSeenWelcome = sessionStorage.getItem('hasSeenWelcome');
+    const isFromLogin = sessionStorage.getItem('justLoggedIn');
+    
+    if (!hasSeenWelcome && isFromLogin) {
+      // Mostrar modal de bienvenida
+      document.getElementById('pageWelcomeUser').textContent = currentUser;
+      document.getElementById('pageWelcomeModal').style.display = 'flex';
+      
+      // Marcar que ya vio el modal en esta sesión
+      sessionStorage.setItem('hasSeenWelcome', 'true');
+    }
+    
+    // Limpiar el flag de login reciente después de verificar
+    sessionStorage.removeItem('justLoggedIn');
+    
   } else {
     // Redirigir al login si no hay usuario
     window.location.href = '../index.html';
@@ -431,6 +449,9 @@ function closeWelcomeModal() {
 
 function logout() {
   localStorage.removeItem('currentUser');
+  // Limpiar también los flags de sesión
+  sessionStorage.removeItem('hasSeenWelcome');
+  sessionStorage.removeItem('justLoggedIn');
   window.location.href = '../index.html';
 }
 
