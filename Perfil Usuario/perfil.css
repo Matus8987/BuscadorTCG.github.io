@@ -1,3 +1,11 @@
+body{
+  background-image: url('../Imagenes/FondoOscuro2.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-image: no-repeat !important;
+}
+
 /* Estilos para el navbar */
 .navbar {
   box-shadow: 0 2px 10px rgba(0,0,0,0.2);
@@ -18,3 +26,14 @@
   color: #bb5d00 !important;
 }
 /* Fin estilos navbar */
+
+/*Panel de Usuario*/
+.panel-usuario {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  max-width: 420px;
+  height: 600px;
+  margin: 40px 5%;
+}
