@@ -2,8 +2,8 @@
  * BUSCADOR POKÉMON TCG - CONFIGURACIÓN Y CONSTANTES
  * Configuración de la API y URLs base para consultas HTTP
  */
-const API_KEY = "9d508e02-69a0-43bf-ad98-8d073b3c19b2";
-const BASE_URL = "https://api.pokemontcg.io/v2/cards";
+const API_KEY = "9d508e02-69a0-43bf-ad98-8d073b3c19b2"; // Clave de API de Pokémon TCG 
+const BASE_URL = "https://api.pokemontcg.io/v2/cards"; // Endpoint base de la API de Pokémon TCG 
 
 /**
  * REFERENCIAS DOM - ELEMENTOS PRINCIPALES
@@ -432,4 +432,85 @@ function closeWelcomeModal() {
 function logout() {
   localStorage.removeItem('currentUser');
   window.location.href = '../index.html';
+}
+
+// Función para actualizar la barra de progreso
+function updateProgressBar(percentage) {
+  const progressBar = document.getElementById('loading-progress-bar');
+  const progressContainer = document.querySelector('.progress');
+  
+  if (progressBar && progressContainer) {
+    progressBar.style.width = percentage + '%';
+    progressBar.textContent = Math.round(percentage) + '%';
+    progressContainer.setAttribute('aria-valuenow', Math.round(percentage));
+  }
+}
+
+// Función para mostrar la barra de progreso
+function showProgressBar() {
+  const loadingContainer = document.getElementById('loading-container');
+  if (loadingContainer) {
+    loadingContainer.style.display = 'block';
+    updateProgressBar(0);
+  }
+}
+
+// Función para ocultar la barra de progreso
+function hideProgressBar() {
+  const loadingContainer = document.getElementById('loading-container');
+  if (loadingContainer) {
+    setTimeout(() => {
+      loadingContainer.style.display = 'none';
+      updateProgressBar(0);
+    }, 500); // Pequeña pausa antes de ocultar
+  }
+}
+
+// Simular progreso durante la carga de cartas
+function simulateProgress(totalCards, onComplete) {
+  let currentProgress = 0;
+  const increment = 100 / totalCards;
+  
+  const progressInterval = setInterval(() => {
+    currentProgress += increment;
+    updateProgressBar(Math.min(currentProgress, 100));
+    
+    if (currentProgress >= 100) {
+      clearInterval(progressInterval);
+      setTimeout(() => {
+        hideProgressBar();
+        if (onComplete) onComplete();
+      }, 300);
+    }
+  }, 100); // Actualiza cada 100ms para hacer el progreso más fluido
+}
+
+// En tu función de búsqueda (modifica según tu implementación actual)
+async function searchCards(query) {
+  try {
+    // Mostrar barra de progreso
+    showProgressBar();
+    
+    // Realizar la búsqueda
+    const response = await fetch(`tu-api-endpoint?q=${query}`);
+    const data = await response.json();
+    
+    // Simular el progreso conforme se cargan las cartas
+    const totalCards = data.data?.length || 0;
+    
+    if (totalCards > 0) {
+      // Simular progreso gradual
+      simulateProgress(totalCards, () => {
+        // Mostrar las cartas cuando termine el progreso
+        displayCards(data.data);
+      });
+    } else {
+      hideProgressBar();
+      // Manejar caso sin resultados
+    }
+    
+  } catch (error) {
+    hideProgressBar();
+    console.error('Error en la búsqueda:', error);
+  }
 }
