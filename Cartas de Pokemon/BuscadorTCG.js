@@ -1,10 +1,5 @@
 /**
- * BUSCADOR POKÉMON TCG - CONFIGURACIÓN Y CONSTANTES
  * Configuración de la API y URLs base para consultas HTTP
- * 
- * NOTA: Si aparece el error "PSL: Preferences API does not have background_setting_preferences"
- * en la consola, es un error interno del navegador (Edge/Chrome) y no afecta la funcionalidad
- * de esta aplicación. Puedes ignorarlo de forma segura.
  */
 const API_KEY = "9d508e02-69a0-43bf-ad98-8d073b3c19b2"; // Clave de API de Pokémon TCG 
 const BASE_URL = "https://api.pokemontcg.io/v2/cards"; // Endpoint base de la API de Pokémon TCG 
@@ -37,6 +32,7 @@ const cardModalRarity = document.getElementById("card-modal-rarity");
 const cardModalSet = document.getElementById("card-modal-set");
 const cardModalInfo = document.getElementById("card-modal-info");
 const cardModalCloseBtn = document.getElementById("card-modal-close");
+const favoriteIcon = document.querySelector('.modal-content .bi-star');
 
 // Elementos de modal - manejo de errores
 const errorModal = document.getElementById("error-modal");
@@ -60,6 +56,9 @@ setFilter.addEventListener("change", applyFilters);
 clearFiltersBtn.addEventListener("click", clearFilters);
 cardModalCloseBtn.addEventListener("click", () => closeModal(cardModal));
 errorModalCloseBtn.addEventListener("click", () => closeModal(errorModal));
+
+// Event listener para la estrella de favoritos
+favoriteIcon.addEventListener("click", toggleFavorite);
 
 // Event listeners para cierre de modales
 cardModal.addEventListener("click", handleModalBackdropClick);
@@ -378,7 +377,40 @@ function openCardModal(cardElement) {
   }
 }
 
+let currentCardData = null;
+
+function toggleFavorite() {
+  if (!currentCardData) return;
+  
+  const favoriteCard = localStorage.getItem('favoriteCard');
+  const icon = document.querySelector('.modal-content i[class*="bi-star"]');
+  
+  if (favoriteCard && JSON.parse(favoriteCard).id === currentCardData.id) {
+    // Quitar de favoritos
+    localStorage.removeItem('favoriteCard');
+    icon.className = 'bi bi-star';
+  } else {
+    // Agregar a favoritos
+    localStorage.setItem('favoriteCard', JSON.stringify(currentCardData));
+    icon.className = 'bi bi-star-fill';
+  }
+}
+
+function updateFavoriteIcon() {
+  if (!currentCardData) return;
+  
+  const favoriteCard = localStorage.getItem('favoriteCard');
+  const icon = document.querySelector('.modal-content i[class*="bi-star"]');
+  
+  if (favoriteCard && JSON.parse(favoriteCard).id === currentCardData.id) {
+    icon.className = 'bi bi-star-fill';
+  } else {
+    icon.className = 'bi bi-star';
+  }
+}
+
 function populateCardModal(card) {
+  currentCardData = card;
   cardModalTitle.textContent = card.name || "Desconocido";
   cardModalImage.src = card.images?.large || card.images?.small || "";
   cardModalImage.alt = `Imagen de ${card.name}`;
@@ -386,6 +418,9 @@ function populateCardModal(card) {
   cardModalRarity.textContent = card.rarity || "Desconocida";
   cardModalSet.textContent = card.set?.name || "Desconocido";
   cardModalInfo.textContent = card.text || card.rules?.join(", ") || "Información no disponible.";
+  
+  // Actualizar estado de la estrella
+  updateFavoriteIcon();
 }
 
 function showModal(modal) {

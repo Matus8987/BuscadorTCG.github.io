@@ -43,8 +43,18 @@
   </div>
 </nav>
  <!-- Panel de usuario -->
-    <div class=" panel-usuario">
-      <h2 id="nombreUsuario" style="text-align: center; font-family: 'Pokemon Solid', sans-serif; -webkit-text-stroke: 1px rgb(0, 0, 0); color: white; font-weight: 700; font-size: 340%;"></h2>
+    <div class="contenedor-perfil">
+      <div class="panel-usuario">
+        <h2 id="nombreUsuario" style="text-align: center; font-family: 'Pokemon Solid', sans-serif; -webkit-text-stroke: 1px rgb(0, 0, 0); color: white; font-weight: 700; font-size: 340%;"></h2>
+        <div class="info-usuario">
+          <p class="NumPaquetes">Paquetes: <span id="cantidadPaquetes"></span></p>
+          <p class="cartaFavorita">Carta Favorita:</p>
+          <div id="cartaFavoritaContainer" class="carta-favorita-container"></div>
+        </div>
+        </div>
+      <div class="noCartas">
+        <h3>Todavía no has comenzado con tus paquetes con tus propias cartas</h3>
+      </div>
     </div>
 </body>
 </html>

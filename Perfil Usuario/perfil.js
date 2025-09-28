@@ -17,7 +17,26 @@ document.addEventListener('DOMContentLoaded', () => {
   if (panelUsuario) {
     panelUsuario.textContent = currentUser;
   }
+  
+  // Mostrar carta favorita
+  displayFavoriteCard();
 });
+
+function displayFavoriteCard() {
+  const favoriteCard = localStorage.getItem('favoriteCard');
+  const cartaFavoritaContainer = document.getElementById('cartaFavoritaContainer');
+  
+  if (favoriteCard && cartaFavoritaContainer) {
+    const card = JSON.parse(favoriteCard);
+    cartaFavoritaContainer.innerHTML = `
+      <div class="favorite-card-display">
+        <img src="${card.images?.small || ''}" alt="Carta favorita: ${card.name}" class="favorite-card-image">
+      </div>
+    `;
+  } else if (cartaFavoritaContainer) {
+    cartaFavoritaContainer.innerHTML = '<p class="no-favorite">Ninguna carta seleccionada</p>';
+  }
+}
 
 // Cerrar sesión
 function logout() {

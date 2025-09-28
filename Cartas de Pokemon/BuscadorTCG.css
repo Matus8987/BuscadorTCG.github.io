@@ -271,12 +271,21 @@ button:focus {
   transition: color 0.3s ease;
 }
 
-#card-modal-close:hover,
-#card-modal-close:focus,
-#error-modal-close:hover,
-#error-modal-close:focus {
-  color: #2e2e2e;
-  outline: none;
+/* Estilos para la estrella favorita */
+.modal-content .bi-star,
+.modal-content .bi-star-fill {
+  position: absolute;
+  top: 10px;
+  left: 15px;
+  font-size: 1.5rem;
+  color: #ffd700;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.modal-content .bi-star:hover,
+.modal-content .bi-star-fill:hover {
+  transform: scale(1.1);
 }
 
 .error-content {
