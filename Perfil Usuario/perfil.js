@@ -20,6 +20,18 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Mostrar carta favorita
   displayFavoriteCard();
+  
+  // Lógica del modal de bienvenida - mostrar siempre al cargar la página de perfil
+  const hasSeenWelcomeToday = sessionStorage.getItem('hasSeenWelcomeToday');
+  
+  if (!hasSeenWelcomeToday) {
+    // Mostrar modal de bienvenida
+    document.getElementById('pageWelcomeUser').textContent = currentUser;
+    document.getElementById('pageWelcomeModal').style.display = 'flex';
+    
+    // Marcar que ya vio el modal hoy
+    sessionStorage.setItem('hasSeenWelcomeToday', 'true');
+  }
 });
 
 function displayFavoriteCard() {
@@ -38,10 +50,15 @@ function displayFavoriteCard() {
   }
 }
 
+function closeWelcomeModal() {
+  document.getElementById('pageWelcomeModal').style.display = 'none';
+}
+
 // Cerrar sesión
 function logout() {
   localStorage.removeItem('currentUser');
   sessionStorage.removeItem('hasSeenWelcome');
   sessionStorage.removeItem('justLoggedIn');
+  sessionStorage.removeItem('hasSeenWelcomeToday');
   window.location.href = '../index.html';
 }

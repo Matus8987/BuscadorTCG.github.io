@@ -3,7 +3,7 @@
 }
 
 body {
-  background-image: url('../Imagenes/FondoOscuro3.png');
+  background-image: url('../Imagenes/FondoOscuroCartas.png');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -292,22 +292,7 @@ button:focus {
   max-width: 350px;
 }
 
-/* Estilos para el modal de bienvenida */
-#pageWelcomeModal .modal-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
 
-#pageWelcomeModal img {
-  margin: 15px 0;
-  max-width: 100%;
-  height: auto;
-}
-
-#pageWelcomeModal button {
-  margin-top: 15px;
-}
 
 /* Media queries para responsividad */
 @media (max-width: 768px) {

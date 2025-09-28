@@ -1,0 +1,49 @@
+body{
+  background-image: url('../Imagenes/FondoOscuroPaquetes.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat !important;
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #2e2e2e;
+  min-height: 100vh;
+}
+
+/* Estilos para el navbar */
+.navbar {
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  z-index: 999;
+  background-color: rgba(29, 29, 61, 0.9) !important;
+}
+
+.navbar-brand {
+  font-weight: 700 !important;
+  color: #bb5d00 !important;
+}
+
+.navbar-nav .nav-link {
+  font-weight: 600;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #bb5d00 !important;
+}
+/* Fin estilos navbar */
+
+/* Estilos básicos para el contenido */
+.container {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+h1 {
+  font-weight: 700;
+  font-family: 'Pokemon Solid', sans-serif;
+  -webkit-text-stroke: 1px rgb(60 90 166);
+  color: #FFCB05;
+  text-align: center;
+  margin-bottom: 20px;
+}

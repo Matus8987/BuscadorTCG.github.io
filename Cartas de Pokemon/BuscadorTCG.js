@@ -32,7 +32,6 @@ const cardModalRarity = document.getElementById("card-modal-rarity");
 const cardModalSet = document.getElementById("card-modal-set");
 const cardModalInfo = document.getElementById("card-modal-info");
 const cardModalCloseBtn = document.getElementById("card-modal-close");
-const favoriteIcon = document.querySelector('.modal-content .bi-star');
 
 // Elementos de modal - manejo de errores
 const errorModal = document.getElementById("error-modal");
@@ -56,9 +55,6 @@ setFilter.addEventListener("change", applyFilters);
 clearFiltersBtn.addEventListener("click", clearFilters);
 cardModalCloseBtn.addEventListener("click", () => closeModal(cardModal));
 errorModalCloseBtn.addEventListener("click", () => closeModal(errorModal));
-
-// Event listener para la estrella de favoritos
-favoriteIcon.addEventListener("click", toggleFavorite);
 
 // Event listeners para cierre de modales
 cardModal.addEventListener("click", handleModalBackdropClick);
@@ -385,6 +381,8 @@ function toggleFavorite() {
   const favoriteCard = localStorage.getItem('favoriteCard');
   const icon = document.querySelector('.modal-content i[class*="bi-star"]');
   
+  if (!icon) return; // Verificar que el icono exista
+  
   if (favoriteCard && JSON.parse(favoriteCard).id === currentCardData.id) {
     // Quitar de favoritos
     localStorage.removeItem('favoriteCard');
@@ -401,6 +399,8 @@ function updateFavoriteIcon() {
   
   const favoriteCard = localStorage.getItem('favoriteCard');
   const icon = document.querySelector('.modal-content i[class*="bi-star"]');
+  
+  if (!icon) return; // Verificar que el icono exista
   
   if (favoriteCard && JSON.parse(favoriteCard).id === currentCardData.id) {
     icon.className = 'bi bi-star-fill';
@@ -421,6 +421,12 @@ function populateCardModal(card) {
   
   // Actualizar estado de la estrella
   updateFavoriteIcon();
+  
+  // Agregar event listener al ícono favorito dinámicamente
+  const favoriteIcon = document.querySelector('.modal-content i[class*="bi-star"]');
+  if (favoriteIcon) {
+    favoriteIcon.onclick = toggleFavorite;
+  }
 }
 
 function showModal(modal) {
@@ -454,37 +460,14 @@ window.addEventListener('DOMContentLoaded', function() {
     // Mostrar barra de usuario
     document.getElementById('currentUserName').textContent = currentUser;
     document.getElementById('userBar').style.display = 'block';
-    
-    // Solo mostrar modal de bienvenida si es la primera vez en esta sesión
-    // y no viene de navegación interna del sitio
-    const hasSeenWelcome = sessionStorage.getItem('hasSeenWelcome');
-    const isFromLogin = sessionStorage.getItem('justLoggedIn');
-    
-    if (!hasSeenWelcome && isFromLogin) {
-      // Mostrar modal de bienvenida
-      document.getElementById('pageWelcomeUser').textContent = currentUser;
-      document.getElementById('pageWelcomeModal').style.display = 'flex';
-      
-      // Marcar que ya vio el modal en esta sesión
-      sessionStorage.setItem('hasSeenWelcome', 'true');
-    }
-    
-    // Limpiar el flag de login reciente después de verificar
-    sessionStorage.removeItem('justLoggedIn');
-    
   } else {
     // Redirigir al login si no hay usuario
     window.location.href = '../index.html';
   }
 });
 
-function closeWelcomeModal() {
-  document.getElementById('pageWelcomeModal').style.display = 'none';
-}
-
 function logout() {
   localStorage.removeItem('currentUser');
-  // Limpiar también los flags de sesión
   sessionStorage.removeItem('hasSeenWelcome');
   sessionStorage.removeItem('justLoggedIn');
   window.location.href = '../index.html';

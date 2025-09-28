@@ -1,11 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Paquetes Pokémon TCG</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="https://fonts.cdnfonts.com/css/pokemon-solid" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="Paquetes.css">
+    <script src="Paquetes.js" defer></script>
 </head>
 <body>
-    
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Pokémon TCG</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="../Perfil Usuario/perfil.html" style="color: white;">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../Cartas de Pokemon/BuscadorTCG.html" style="color: white;">Cartas</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="../Paquetes/Paquetes.html" style="color: white;">Paquetes</a>
+        </li>
+      </ul>
+      <div id="userBar" class="navbar-nav ms-auto" style="display: none;">
+        <div class="nav-item d-flex align-items-center">
+          <span id="currentUserName" class="nav-link text-dark fw-semibold me-2" style="color: white !important;"></span>
+          <i class="bi bi-box-arrow-right nav-link" onclick="logout()" style="cursor: pointer; font-size: 18px; color: white !important;" title="Cerrar sesión"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Contenido de la página de paquetes -->
+<div class="container mt-4">
+    <h1>Paquetes Pokémon TCG</h1>
+    <p>Contenido de paquetes aquí...</p>
+</div>
 </body>
 </html>

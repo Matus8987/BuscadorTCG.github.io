@@ -1,5 +1,5 @@
 body{
-  background-image: url('../Imagenes/FondoOscuro2.png');
+  background-image: url('../Imagenes/FondoOscuroPerfil.png');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -94,4 +94,45 @@ body{
   margin-top: 10px;
   font-family: 'Segoe UI', sans-serif;
   -webkit-text-stroke: 1px rgb(0, 0, 0);
+}
+/* Estilos para el modal de bienvenida */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 0 20px #b5c6e1;
+  text-align: center;
+}
+
+#pageWelcomeModal .modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#pageWelcomeModal img {
+  margin: 15px 0;
+  max-width: 100%;
+  height: auto;
+}
+
+#pageWelcomeModal button {
+  margin-top: 15px;
 }
