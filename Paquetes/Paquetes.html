@@ -45,11 +45,78 @@
 <!-- Contenido de la página de paquetes -->
 <div class="container mt-4">
     <h1 class="titulo-paquetes">Paquetes Pokémon TCG</h1>
-    <div class="contenedor-paquetes">
-      <i class="bi bi-plus-lg" style="font-size: 27px;padding: 0px 10px 0px 10px;color: #ffffff;background-color: #b95c00;border-radius: 8px; margin-top: 14px; margin-bottom: 14px;"></i>
-      <img src="../Imagenes/Cartas.png" class="img-thumbnail" style="background-color: none !important;">
-      <h5 style="text-align: center;">Comienza creando un nuevo paquete</h5>
+    <div id="paquetes-container" class="paquetes-grid">
+      <div class="contenedor-crear-paquete">
+        <button type="button" class="btn-crear-paquete">
+          <i class="bi bi-plus-lg" style="font-size: 27px;padding: 0px 10px 0px 10px;color: #ffffff;background-color: #b95c00;border-radius: 8px; margin-top: 14px; margin-bottom: 14px;"></i>
+        </button>
+        <h5 style="text-align: center;">Comienza creando un nuevo paquete</h5>
+      </div>
     </div>
 </div>
+
+<!-- Modal para crear paquete -->
+<div class="modal fade" id="modalCrearPaquete" tabindex="-1" aria-labelledby="modalCrearPaqueteLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modalCrearPaqueteLabel">Crear Nuevo Paquete</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formCrearPaquete">
+          <div class="mb-3">
+            <label for="nombrePaquete" class="form-label">Nombre del Paquete *</label>
+            <input type="text" class="form-control" id="nombrePaquete" required>
+          </div>
+          <div class="mb-3">
+            <label for="numeroCartas" class="form-label">Número de cartas disponibles *</label>
+            <input type="number" class="form-control" id="numeroCartas" min="1" required>
+          </div>
+          <div class="mb-3">
+            <label for="rarezaEspecifica" class="form-label">Rareza específica (Opcional)</label>
+            <select class="form-select" id="rarezaEspecifica">
+              <option value="">Seleccionar rareza</option>
+              <option value="common">Common</option>
+              <option value="uncommon">Uncommon</option>
+              <option value="rare">Rare</option>
+              <option value="rare holo">Rare Holo</option>
+              <option value="rare holo ex">Rare Holo EX</option>
+              <option value="rare holo gx">Rare Holo GX</option>
+              <option value="rare holo v">Rare Holo V</option>
+              <option value="rare holo vmax">Rare Holo VMAX</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="setEspecifico" class="form-label">Set específico (Opcional)</label>
+            <input type="text" class="form-control" id="setEspecifico" placeholder="Ej: Base Set, Jungle, etc.">
+          </div>
+          <div class="mb-3">
+            <label for="tipoPokemon" class="form-label">Tipo de Pokémon (Opcional)</label>
+            <select class="form-select" id="tipoPokemon">
+              <option value="">Seleccionar tipo</option>
+              <option value="grass">Planta</option>
+              <option value="fire">Fuego</option>
+              <option value="water">Agua</option>
+              <option value="lightning">Eléctrico</option>
+              <option value="psychic">Psíquico</option>
+              <option value="fighting">Lucha</option>
+              <option value="darkness">Siniestro</option>
+              <option value="metal">Metal</option>
+              <option value="fairy">Hada</option>
+              <option value="dragon">Dragón</option>
+              <option value="colorless">Incoloro</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="crearPaquete()">Crear Paquete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
