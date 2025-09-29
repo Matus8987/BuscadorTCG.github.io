@@ -39,11 +39,23 @@ body{
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-h1 {
+.titulo-paquetes {
   font-weight: 700;
   font-family: 'Pokemon Solid', sans-serif;
   -webkit-text-stroke: 1px rgb(60 90 166);
   color: #FFCB05;
   text-align: center;
   margin-bottom: 20px;
+}
+
+.contenedor-paquetes {
+  width: 25%;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  background-color: rgb(255, 255, 255, 0.5);
+  justify-content: space-evenly;
+  align-content: stretch;
+  flex-wrap: nowrap;
+  flex-direction: column;
 }

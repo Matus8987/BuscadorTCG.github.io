@@ -23,6 +23,9 @@ const rarityFilter = document.getElementById("rarity-filter");
 const setFilter = document.getElementById("set-filter");
 const clearFiltersBtn = document.getElementById("clear-filters");
 
+// Elementos adicionales
+const clearSearchBtn = document.getElementById("clear-search");
+
 // Elementos de modal - detalles de carta
 const cardModal = document.getElementById("card-modal");
 const cardModalTitle = document.getElementById("card-modal-title");
@@ -44,6 +47,7 @@ const errorModalCloseBtn = document.getElementById("error-modal-close");
  */
 let allLoadedCards = []; // Cache local de cartas cargadas desde API
 let progressInterval; // Handler para animación de barra de progreso
+let lastSearchQuery = ''; // Almacenar la última búsqueda
 
 /**
  * INICIALIZACIÓN DE EVENT LISTENERS
@@ -53,6 +57,7 @@ form.addEventListener("submit", handleSearchSubmit);
 rarityFilter.addEventListener("change", applyFilters);
 setFilter.addEventListener("change", applyFilters);
 clearFiltersBtn.addEventListener("click", clearFilters);
+clearSearchBtn.addEventListener("click", clearCachedCards);
 cardModalCloseBtn.addEventListener("click", () => closeModal(cardModal));
 errorModalCloseBtn.addEventListener("click", () => closeModal(errorModal));
 
@@ -166,6 +171,11 @@ async function fetchAllCards(query) {
     
     // Procesamiento y renderizado de datos
     allLoadedCards = data.data;
+    lastSearchQuery = query;
+    
+    // Guardar cartas y búsqueda en localStorage
+    localStorage.setItem('cachedCards', JSON.stringify(allLoadedCards));
+    localStorage.setItem('lastSearchQuery', query);
     
     // Progreso durante renderizado
     updateProgress(70);
@@ -239,10 +249,18 @@ function createCardElement(card) {
     <div class="card-type"><strong>Tipo:</strong> ${card.types ? card.types.join(", ") : "Desconocido"}</div>
     <div class="card-rarity"><strong>Rareza:</strong> ${card.rarity || "Desconocida"}</div>
     <div class="card-set"><strong>Set:</strong> ${card.set?.name || "Desconocido"}</div>
+    <button class="add-to-pack-btn" onclick="addToPack(event, '${card.id}')" title="Agregar a paquete">
+      <i class="bi bi-plus-lg"></i> Agregar a paquete
+    </button>
   `;
 
   // Event delegation para interacción con cartas
-  article.addEventListener("click", () => openCardModal(article));
+  article.addEventListener("click", (e) => {
+    // Evitar que el click en el botón abra el modal
+    if (!e.target.closest('.add-to-pack-btn')) {
+      openCardModal(article);
+    }
+  });
   article.addEventListener("keydown", handleCardKeydown);
 
   return article;
@@ -452,6 +470,45 @@ function showErrorModal(message) {
   showModal(errorModal);
 }
 
+/**
+ * FUNCIONES DE PERSISTENCIA
+ * Funciones para guardar y cargar estado de la aplicación
+ */
+function loadCachedCards() {
+  const cachedCards = localStorage.getItem('cachedCards');
+  const cachedQuery = localStorage.getItem('lastSearchQuery');
+  
+  if (cachedCards && cachedQuery) {
+    try {
+      allLoadedCards = JSON.parse(cachedCards);
+      lastSearchQuery = cachedQuery;
+      input.value = cachedQuery;
+      
+      displayCards(allLoadedCards);
+      populateFilters(allLoadedCards);
+      showFilters();
+      
+      return true;
+    } catch (error) {
+      console.error('Error al cargar cartas guardadas:', error);
+      localStorage.removeItem('cachedCards');
+      localStorage.removeItem('lastSearchQuery');
+    }
+  }
+  
+  return false;
+}
+
+function clearCachedCards() {
+  localStorage.removeItem('cachedCards');
+  localStorage.removeItem('lastSearchQuery');
+  allLoadedCards = [];
+  lastSearchQuery = '';
+  container.innerHTML = "";
+  hideFilters();
+  input.value = '';
+}
+
 // Función para inicializar la página al cargar
 window.addEventListener('DOMContentLoaded', function() {
   const currentUser = localStorage.getItem('currentUser');
@@ -460,6 +517,10 @@ window.addEventListener('DOMContentLoaded', function() {
     // Mostrar barra de usuario
     document.getElementById('currentUserName').textContent = currentUser;
     document.getElementById('userBar').style.display = 'block';
+    
+    // Cargar cartas guardadas si existen
+    loadCachedCards();
+    
   } else {
     // Redirigir al login si no hay usuario
     window.location.href = '../index.html';
@@ -470,6 +531,8 @@ function logout() {
   localStorage.removeItem('currentUser');
   sessionStorage.removeItem('hasSeenWelcome');
   sessionStorage.removeItem('justLoggedIn');
+  // Limpiar también las cartas guardadas al cerrar sesión
+  clearCachedCards();
   window.location.href = '../index.html';
 }
 
@@ -552,4 +615,46 @@ async function searchCards(query) {
     hideProgressBar();
     console.error('Error en la búsqueda:', error);
   }
+}
+
+// Función para agregar carta al paquete
+function addToPack(event, cardId) {
+  event.stopPropagation(); // Evitar que se abra el modal
+  
+  // Verificar si el usuario tiene al menos un paquete creado
+  let userPacks = JSON.parse(localStorage.getItem('userPacks') || '[]');
+  let userPacksMetadata = JSON.parse(localStorage.getItem('userPacksMetadata') || '[]');
+  
+  // Si no hay metadata de paquetes creados, mostrar error
+  if (userPacksMetadata.length === 0) {
+    showErrorModal("Primero debes crear un paquete");
+    return;
+  }
+  
+  // Buscar la carta en allLoadedCards
+  const card = allLoadedCards.find(c => c.id === cardId);
+  if (!card) return;
+  
+  // Verificar si la carta ya existe en el paquete
+  const cardExists = userPacks.some(packCard => packCard.id === cardId);
+  
+  if (cardExists) {
+    showErrorModal("Esta carta ya está en tu paquete.");
+    return;
+  }
+  
+  // Agregar la carta al paquete
+  userPacks.push(card);
+  localStorage.setItem('userPacks', JSON.stringify(userPacks));
+  
+  // Feedback visual - cambiar temporalmente el texto del botón
+  const button = event.target.closest('.add-to-pack-btn');
+  const originalText = button.innerHTML;
+  button.innerHTML = '<i class="bi bi-check"></i> Agregado';
+  button.style.backgroundColor = '#28a745';
+  
+  setTimeout(() => {
+    button.innerHTML = originalText;
+    button.style.backgroundColor = '';
+  }, 2000);
 }
