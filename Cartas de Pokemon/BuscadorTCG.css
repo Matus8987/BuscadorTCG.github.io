@@ -320,7 +320,98 @@ button:focus {
   max-width: 350px;
 }
 
+/* Estilos para selector de paquetes */
+.package-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 12px;
+  max-height: 320px;
+  overflow: auto;
+  padding: 6px 0;
+}
+.package-list .package-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #fff 0%, #f7f7f7 100%);
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.package-list .package-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.10);
+}
+.package-list .package-item .pkg-info {
+  text-align: left;
+}
+.package-list .package-item .pkg-name {
+  font-weight: 700;
+  color: #2e2e2e;
+}
+.package-list .package-item .pkg-meta {
+  font-size: 0.85rem;
+  color: #666;
+}
 
+/* Modal layout tweaks for package select */
+.modal-content.package-select {
+  max-width: 520px;
+  padding: 14px 16px;
+}
+.modal-content.package-select .modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  margin-bottom: 10px;
+}
+.modal-content.package-select .modal-footer.small-note {
+  margin-top: 10px;
+  border-top: 1px solid rgba(0,0,0,0.04);
+  padding-top: 10px;
+}
+
+/* Confirm save modal */
+.modal-content.confirm-save {
+  max-width: 380px;
+  padding: 22px;
+  text-align: center;
+  position: relative;
+  background: linear-gradient(180deg,#ffffff,#fbfbfd);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+}
+.modal-content.confirm-save .confirm-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #bb5d00;
+  color: white;
+  font-weight: 800;
+  font-size: 34px;
+  box-shadow: 0 8px 18px rgba(255, 104, 3, 0.28);
+  margin: 6px auto 12px;
+}
+.modal-content.confirm-save h2 {
+  margin-top: 6px;
+  color: #1f2a2a;
+}
+
+/* Anim clone container: optional safety styling */
+#animation-overlay img {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform-origin: center center;
+}
 
 /* Media queries para responsividad */
 @media (max-width: 768px) {
@@ -386,4 +477,55 @@ button:focus {
     margin: 10px;
     padding: 15px;
   }
+}
+
+/* Sobrescribir el hover global de botones para los botones de cierre en modales */
+.modal-content .btn-close {
+  /* quitar la imagen SVG por defecto */
+  background-image: none !important;
+  border: none;
+  /* asegurar tamaño y centrado del carácter */
+  width: 1.6rem;
+  height: 1.6rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: #000 !important; /* X negra */
+  text-shadow: none;
+}
+
+/* Insertar el carácter '×' para botones .btn-close (en vez de fondo SVG) */
+.modal-content .btn-close::before {
+  content: "×";
+  font-weight: 700;
+  color: inherit;
+  display: block;
+}
+
+/* No cambiar el fondo ni el color en hover/focus */
+.modal-content .btn-close:hover,
+.modal-content .btn-close:focus {
+  background: transparent !important;
+  color: #000 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Asegurar que los botones de cierre con id muestren la X en negro y sin hover de fondo */
+#card-modal-close,
+#error-modal-close {
+  color: #000 !important;
+  background: transparent !important;
+}
+#card-modal-close:hover,
+#error-modal-close:hover,
+#card-modal-close:focus,
+#error-modal-close:focus {
+  background: transparent !important;
+  color: #000 !important;
+  box-shadow: none !important;
+  outline: none !important;
 }

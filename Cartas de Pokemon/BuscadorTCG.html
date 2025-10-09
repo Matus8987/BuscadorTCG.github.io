@@ -65,7 +65,7 @@
       <div id="loading-container" style="text-align:center; margin: 20px 0; display: none;">
         <div id="loading-message" style="color: white; font-weight: 600; margin-bottom: 10px;">Cargando cartas...</div>
         <div class="progress" role="progressbar" aria-label="Progreso de carga de cartas" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 25px; max-width: 400px; margin: 0 auto; background-color: rgba(255,255,255,0.3); border-radius: 12px; overflow: hidden;">
-          <div id="loading-progress-bar" class="progress-bar" style="width: 0%; background: linear-gradient(90deg, #cc0000, #ff4444); color: white; font-weight: 600; line-height: 25px; text-align: center; transition: width 0.5s ease-in-out;">0%</div>
+          <div id="loading-progress-bar" class="progress-bar" style="width: 0%; background: linear-gradient(90deg, #6d3704, #ffa807); color: white; font-weight: 600; line-height: 25px; text-align: center; transition: width 0.5s ease-in-out;">0%</div>
         </div>
       </div>
 
@@ -138,6 +138,32 @@
       <p id="error-modal-message"></p>
     </div>
   </div>
+
+  <!-- Modal: seleccionar paquete a donde agregar la carta -->
+  <div id="package-select-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="package-select-title">
+    <div class="modal-content package-select">
+      <header class="modal-header">
+        <h3 id="package-select-title">Selecciona un paquete</h3>
+        <button class="btn-close" aria-label="Cerrar" onclick="closeModal(document.getElementById('package-select-modal'))"></button>
+      </header>
+      <div id="package-list" class="package-list" role="list"></div>
+      <footer class="modal-footer small-note" style="display:block; text-align:center;">
+        <small>Si no hay paquetes, crea uno en la sección "Paquetes".</small>
+      </footer>
+    </div>
+  </div>
+  
+  <!-- Modal: confirmación de guardado -->
+  <div id="confirm-save-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="confirm-save-title">
+    <div class="modal-content confirm-save">
+      <div class="confirm-icon" aria-hidden="true">✓</div>
+      <h2 id="confirm-save-title">¡Guardada!</h2>
+      <p id="confirm-save-body">La carta se ha añadido al paquete correctamente.</p>
+    </div>
+  </div>
+
+  <!-- Contenedor para clones animados (se usa desde JS) -->
+  <div id="animation-overlay" aria-hidden="true" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:2000;"></div>
 
   <script src="BuscadorTCG.js"></script>
   <!-- Bootstrap JS -->

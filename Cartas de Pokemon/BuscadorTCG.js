@@ -132,21 +132,87 @@ function stopLoadingProgress() {
   clearInterval(progressInterval);
 }
 
+/* REPLACED PROGRESS + PRELOAD LOGIC:
+   - Add ProgressManager to auto-increment slowly up to a ceiling.
+   - Use per-image load/error events to advance the remaining percent and finish at 100% only when all images are loaded.
+   - Render cards immediately (faster perceived load). */
+
+// --- new ProgressManager ---
+const ProgressManager = (function () {
+  let containerEl = null;
+  let barEl = null;
+  let interval = null;
+  let percent = 0;
+  let totalImages = 1;
+  let loadedImages = 0;
+  const autoCeiling = 80; // auto increment will approach this before images finish
+  const autoStepMin = 0.5;
+  const autoStepMax = 2.0;
+  function ensureEls() {
+    if (!containerEl) containerEl = document.getElementById('loading-container');
+    if (!barEl) barEl = document.getElementById('loading-progress-bar');
+  }
+  function setBar(p) {
+    ensureEls();
+    percent = Math.max(0, Math.min(100, p));
+    if (barEl) {
+      barEl.style.width = percent + '%';
+      barEl.textContent = Math.round(percent) + '%';
+      if (barEl.parentElement) barEl.parentElement.setAttribute('aria-valuenow', Math.round(percent));
+    }
+  }
+  function start(total) {
+    ensureEls();
+    totalImages = Math.max(1, total || 1);
+    loadedImages = 0;
+    setBar(0);
+    if (containerEl) containerEl.style.display = 'block';
+    clearInterval(interval);
+    interval = setInterval(() => {
+      // slowly increment toward autoCeiling
+      if (percent < autoCeiling) {
+        const step = autoStepMin + Math.random() * (autoStepMax - autoStepMin);
+        setBar(Math.min(percent + step, autoCeiling));
+      }
+    }, 450);
+  }
+  function imageLoaded() {
+    loadedImages++;
+    // allocate remaining percent (100 - autoCeiling) proportionally to images loaded
+    const remaining = 100 - autoCeiling;
+    const imagePortion = (loadedImages / totalImages) * remaining;
+    setBar(Math.min(autoCeiling + imagePortion, 99.9));
+    if (loadedImages >= totalImages) {
+      finish();
+    }
+  }
+  function finish() {
+    clearInterval(interval);
+    setBar(100);
+    // hide after a short delay so users see 100%
+    setTimeout(() => {
+      if (containerEl) containerEl.style.display = 'none';
+      setBar(0);
+    }, 600);
+  }
+  return { start, imageLoaded, finish, setBar };
+})();
+// --- end ProgressManager ---
+
 /**
  * SERVICIOS DE API
  * Funciones para comunicación con la API de Pokémon TCG
  */
 async function fetchAllCards(query) {
-  startLoadingProgress();
+  // start a small visible progress immediately
+  ProgressManager.start(1);
+
   container.innerHTML = "";
   hideFilters();
 
   const url = buildApiUrl(query);
 
   try {
-    // Progreso inicial
-    updateProgress(10);
-    
     const response = await fetch(url, {
       headers: { "X-Api-Key": API_KEY },
     });
@@ -155,47 +221,41 @@ async function fetchAllCards(query) {
       throw new Error(`Error HTTP: ${response.status}`);
     }
 
-    // Progreso tras recibir respuesta
-    updateProgress(30);
-    
     const data = await response.json();
 
     if (!data.data || data.data.length === 0) {
-      stopLoadingProgress();
+      ProgressManager.finish();
       showErrorModal("Nombre incorrectamente escrito.");
       return;
     }
 
-    // Progreso tras procesar datos
-    updateProgress(50);
-    
-    // Procesamiento y renderizado de datos
+    // Use total cards to size progress manager (images to wait for)
     allLoadedCards = data.data;
     lastSearchQuery = query;
-    
+
     // Guardar cartas y búsqueda en localStorage
     localStorage.setItem('cachedCards', JSON.stringify(allLoadedCards));
     localStorage.setItem('lastSearchQuery', query);
-    
-    // Progreso durante renderizado
-    updateProgress(70);
-    
-    await displayCards(allLoadedCards);
-    
-    // Progreso tras renderizar cartas
-    updateProgress(85);
-    
+
+    // Start progress based on number of images to load
+    ProgressManager.start(allLoadedCards.length);
+
+    // Fast render: display cards immediately (don't block on images)
+    displayCards(allLoadedCards);
+
+    // Wait until all images in the rendered container have loaded/errored,
+    // ProgressManager.imageLoaded() will be called per image.
+    await waitForAllImagesLoad();
+
+    // Ensure progress finishes (ProgressManager will also finish when last image reports)
+    ProgressManager.finish();
+
     // Configuración de filtros UI
     populateFilters(allLoadedCards);
     showFilters();
-    
-    // Progreso completo
-    updateProgress(95);
-    
-    completeLoadingProgress();
 
   } catch (error) {
-    stopLoadingProgress();
+    ProgressManager.finish();
     showErrorModal(`Error al cargar las cartas: ${error.message}`);
   }
 }
@@ -218,23 +278,74 @@ async function displayCards(cards) {
   const fragment = document.createDocumentFragment();
   const totalCards = cards.length;
 
+  // Create and append card elements quickly
   cards.forEach((card, index) => {
     const article = createCardElement(card);
     fragment.appendChild(article);
-    
-    // Actualizar progreso durante la creación de elementos
-    const cardProgress = Math.min(70 + (index / totalCards) * 15, 85);
-    if (index % 10 === 0 || index === totalCards - 1) { // Actualizar cada 10 cartas o en la última
-      updateProgress(cardProgress);
+
+    // light progress hint while building DOM (not final)
+    if (index % 10 === 0) {
+      // small nudge so progress doesn't stay at 0 before images start loading
+      const approx = Math.min(30 + (index / totalCards) * 20, 50);
+      ProgressManager.setBar(approx);
     }
   });
 
   container.appendChild(fragment);
-  
-  // Optimización: preload de imágenes más rápido
-  await preloadCardImages();
+
+  // Do NOT await image preload here; wait is handled separately so UI is responsive
+  // preloadCardImages removed to speed up perceived load.
 }
 
+// Wait for all images inside #cards-container to finish loading or error.
+// Calls ProgressManager.imageLoaded() per image and resolves when all done.
+function waitForAllImagesLoad() {
+  return new Promise((resolve) => {
+    const imgs = container.querySelectorAll('img');
+    const total = imgs.length || 1;
+    let done = 0;
+
+    if (total === 0) {
+      // nothing to wait
+      ProgressManager.imageLoaded(); // mark 1-of-1
+      return resolve();
+    }
+
+    imgs.forEach((img) => {
+      // If image already finished, count immediately
+      if (img.complete) {
+        done++;
+        ProgressManager.imageLoaded();
+        if (done >= total) resolve();
+        return;
+      }
+
+      const onFinish = () => {
+        img.removeEventListener('load', onFinish);
+        img.removeEventListener('error', onFinish);
+        done++;
+        ProgressManager.imageLoaded();
+        if (done >= total) resolve();
+      };
+
+      img.addEventListener('load', onFinish);
+      img.addEventListener('error', onFinish);
+
+      // As a defensive timeout in case an image never fires load/error
+      setTimeout(() => {
+        if (!img.complete) {
+          // treat as loaded after timeout to avoid forever-wait
+          try { img.dispatchEvent(new Event('error')); } catch {}
+        }
+      }, 10000); // 10s per image timeout
+    });
+  });
+}
+
+/**
+ * RENDERIZADO DE COMPONENTES
+ * Funciones para manipulación del DOM y presentación de datos
+ */
 function createCardElement(card) {
   const article = document.createElement("article");
   article.className = "card";
@@ -271,22 +382,6 @@ function handleCardKeydown(e) {
     e.preventDefault();
     openCardModal(e.currentTarget);
   }
-}
-
-async function preloadCardImages() {
-  const images = container.querySelectorAll('img');
-  const imagePromises = Array.from(images).map(img => {
-    return new Promise(resolve => {
-      if (img.complete) {
-        resolve();
-      } else {
-        img.onload = resolve;
-        img.onerror = resolve; // Resolución robusta en caso de error
-      }
-    });
-  });
-  
-  await Promise.all(imagePromises);
 }
 
 /**
@@ -617,44 +712,184 @@ async function searchCards(query) {
   }
 }
 
-// Función para agregar carta al paquete
+// Función para agregar carta al paquete (ahora abre modal para seleccionar paquete)
 function addToPack(event, cardId) {
   event.stopPropagation(); // Evitar que se abra el modal
-  
-  // Verificar si el usuario tiene al menos un paquete creado
-  let userPacks = JSON.parse(localStorage.getItem('userPacks') || '[]');
-  let userPacksMetadata = JSON.parse(localStorage.getItem('userPacksMetadata') || '[]');
-  
-  // Si no hay metadata de paquetes creados, mostrar error
-  if (userPacksMetadata.length === 0) {
+
+  // Mostrar modal de selección de paquete
+  showPackageSelectModal(cardId, event.target);
+}
+
+// Mostrar modal con paquetes creados para seleccionar
+function showPackageSelectModal(cardId, sourceElement) {
+  const paquetes = JSON.parse(localStorage.getItem('paquetesCreados') || '[]');
+
+  if (!paquetes || paquetes.length === 0) {
     showErrorModal("Primero debes crear un paquete");
     return;
   }
-  
-  // Buscar la carta en allLoadedCards
+
+  const listEl = document.getElementById('package-list');
+  listEl.innerHTML = '';
+
+  paquetes.forEach(p => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn btn-outline-primary';
+    btn.style.textAlign = 'left';
+    btn.style.display = 'block';
+    btn.style.width = '100%';
+    btn.textContent = `${p.nombre} — ${p.numeroCartas} cartas`;
+    btn.dataset.pkgId = p.id;
+    btn.addEventListener('click', () => {
+      // Al seleccionar paquete: iniciar flujo de mostrar carta, animar y guardar
+      handlePackageSelection(p.id, cardId);
+    });
+    listEl.appendChild(btn);
+  });
+
+  // Mostrar modal
+  const modalEl = document.getElementById('package-select-modal');
+  showModal(modalEl);
+}
+
+// Maneja la selección de paquete
+async function handlePackageSelection(packageId, cardId) {
+  // Cerrar modal de selección
+  closeModal(document.getElementById('package-select-modal'));
+
+  // Buscar carta en cache
   const card = allLoadedCards.find(c => c.id === cardId);
-  if (!card) return;
-  
-  // Verificar si la carta ya existe en el paquete
-  const cardExists = userPacks.some(packCard => packCard.id === cardId);
-  
-  if (cardExists) {
-    showErrorModal("Esta carta ya está en tu paquete.");
+  if (!card) {
+    showErrorModal("No se encontró la carta en cache.");
     return;
   }
-  
-  // Agregar la carta al paquete
-  userPacks.push(card);
-  localStorage.setItem('userPacks', JSON.stringify(userPacks));
-  
-  // Feedback visual - cambiar temporalmente el texto del botón
-  const button = event.target.closest('.add-to-pack-btn');
-  const originalText = button.innerHTML;
-  button.innerHTML = '<i class="bi bi-check"></i> Agregado';
-  button.style.backgroundColor = '#28a745';
-  
+
+  // Mostrar modal de la carta
+  try {
+    populateCardModal(card);
+    showModal(cardModal);
+  } catch (e) {
+    showErrorModal("No se pudo mostrar la carta.");
+    return;
+  }
+
+  // Esperar un momento para que el modal aparezca y el DOM tenga la imagen
+  await new Promise(r => setTimeout(r, 300));
+
+  // Animar la imagen del modal hacia abajo
+  const imgEl = document.getElementById('card-modal-image');
+  await animateCardToBottom(imgEl);
+
+  // Guardar la carta en userPacksMap por packageId
+  saveCardToPackage(packageId, card);
+
+  // Cerrar modal de la carta (si sigue abierto) y mostrar confirmación
+  closeModal(cardModal);
+  showConfirmSaveModal();
+}
+
+// Persistencia: guardar carta bajo un paquete específico
+function saveCardToPackage(packageId, card) {
+  const mapKey = 'userPacksMap';
+  const map = JSON.parse(localStorage.getItem(mapKey) || '{}');
+
+  if (!Array.isArray(map[packageId])) map[packageId] = [];
+
+  // Evitar duplicados por id
+  if (map[packageId].some(c => c.id === card.id)) {
+    // Si ya existe, no duplicar; mostrar confirm rápido
+    return;
+  }
+
+  map[packageId].push(card);
+  localStorage.setItem(mapKey, JSON.stringify(map));
+}
+
+// Mostrar modal de confirmación
+function showConfirmSaveModal() {
+  const modalEl = document.getElementById('confirm-save-modal');
+  showModal(modalEl);
+
+  // Cerrar automáticamente tras 1.5s
   setTimeout(() => {
-    button.innerHTML = originalText;
-    button.style.backgroundColor = '';
-  }, 2000);
+    closeModal(modalEl);
+  }, 1500);
+}
+
+// Animación: clona la imagen, la posiciona encima, hace un "despegue" breve y luego la mueve hacia abajo más lento
+function animateCardToBottom(imageElement) {
+  return new Promise(resolve => {
+    if (!imageElement) {
+      resolve();
+      return;
+    }
+
+    const overlay = document.getElementById('animation-overlay');
+
+    // Obtener posición y tamaño actuales
+    const rect = imageElement.getBoundingClientRect();
+
+    // Crear clon
+    const clone = imageElement.cloneNode(true);
+    clone.style.position = 'fixed';
+    clone.style.left = rect.left + 'px';
+    clone.style.top = rect.top + 'px';
+    clone.style.width = rect.width + 'px';
+    clone.style.height = rect.height + 'px';
+    clone.style.zIndex = 3000;
+    clone.style.pointerEvents = 'none';
+    clone.style.borderRadius = window.getComputedStyle(imageElement).borderRadius;
+    // Preparar para animación (primera fase: despegue)
+    clone.style.transition = 'transform 240ms cubic-bezier(.2,.8,.2,1), opacity 240ms ease';
+    clone.style.transform = 'translateY(0px) scale(1) rotate(0deg)';
+    overlay.appendChild(clone);
+
+    // Forzar reflow
+    void clone.offsetWidth;
+
+    // Primera fase: pequeño "despegue" (subir, agrandar un poco, rotar)
+    const liftY = -36;
+    clone.style.transform = `translateY(${liftY}px) scale(1.06) rotate(-4deg)`;
+    clone.style.opacity = '1';
+
+    // Al acabar la primera fase, iniciar la segunda fase (caída lenta hacia abajo)
+    const onLiftEnd = () => {
+      clone.removeEventListener('transitionend', onLiftEnd);
+
+      // Segunda fase: transición más lenta hacia abajo
+      const distance = window.innerHeight - rect.top + rect.height + 120; // salir abajo
+      // Cambiar transición a duración mayor y easing suave
+      clone.style.transition = 'transform 1400ms cubic-bezier(.22,.9,.32,1), opacity 900ms ease';
+      // Aplicar movimiento hacia abajo, rotación y reducción de opacidad
+      clone.style.transform = `translateY(${distance}px) rotate(8deg) scale(0.92)`;
+      clone.style.opacity = '0.85';
+
+      // Escuchar final de la segunda transición
+      const onFallEnd = () => {
+        clone.removeEventListener('transitionend', onFallEnd);
+        clone.remove();
+        resolve();
+      };
+      clone.addEventListener('transitionend', onFallEnd);
+
+      // Safety timeout
+      setTimeout(() => {
+        if (document.body.contains(clone)) {
+          clone.remove();
+          resolve();
+        }
+      }, 1700);
+    };
+
+    clone.addEventListener('transitionend', onLiftEnd);
+
+    // Safety: si transitionend no se dispara en la fase de lift, forzamos la segunda fase tras 300ms
+    setTimeout(() => {
+      // if still present and still in initial lift, trigger second phase
+      if (document.body.contains(clone) && clone.style.transition.includes('240ms')) {
+        onLiftEnd();
+      }
+    }, 320);
+  });
 }

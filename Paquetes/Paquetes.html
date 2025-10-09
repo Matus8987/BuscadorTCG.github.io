@@ -89,7 +89,22 @@
           </div>
           <div class="mb-3">
             <label for="setEspecifico" class="form-label">Set específico (Opcional)</label>
-            <input type="text" class="form-control" id="setEspecifico" placeholder="Ej: Base Set, Jungle, etc.">
+            <select class="form-select" id="setEspecifico">
+              <option value="">Seleccionar set (opcional)</option>
+              <option value="Base Set">Base Set</option>
+              <option value="Jungle">Jungle</option>
+              <option value="Fossil">Fossil</option>
+              <option value="Team Rocket">Team Rocket</option>
+              <option value="Gym Heroes">Gym Heroes</option>
+              <option value="Neo Genesis">Neo Genesis</option>
+              <option value="EX Ruby &amp; Sapphire">EX Ruby &amp; Sapphire</option>
+              <option value="Diamond &amp; Pearl">Diamond &amp; Pearl</option>
+              <option value="Black &amp; White">Black &amp; White</option>
+              <option value="XY">XY</option>
+              <option value="Sun &amp; Moon">Sun &amp; Moon</option>
+              <option value="Sword &amp; Shield">Sword &amp; Shield</option>
+              <option value="Scarlet &amp; Violet">Scarlet &amp; Violet</option>
+            </select>
           </div>
           <div class="mb-3">
             <label for="tipoPokemon" class="form-label">Tipo de Pokémon (Opcional)</label>
@@ -105,14 +120,13 @@
               <option value="metal">Metal</option>
               <option value="fairy">Hada</option>
               <option value="dragon">Dragón</option>
-              <option value="colorless">Incoloro</option>
             </select>
           </div>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-primary" onclick="crearPaquete()">Crear Paquete</button>
+        <button type="button" class="btn btn-warning" onclick="crearPaquete()">Crear Paquete</button>
       </div>
     </div>
   </div>

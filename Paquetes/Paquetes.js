@@ -44,7 +44,7 @@ function abrirModalCrearPaquete() {
   try {
     const modalElement = document.getElementById('modalCrearPaquete');
     if (modalElement) {
-      const modal = new bootstrap.Modal(modalElement);
+      const modal = getModalInstance(modalElement);
       modal.show();
     } else {
       console.error('Modal element not found');
@@ -53,6 +53,90 @@ function abrirModalCrearPaquete() {
     console.error('Error opening modal:', error);
   }
 }
+
+// --- Updated: modal helper + dismissal handlers ---
+function showModalFallback(modalElement) {
+	if (!modalElement) return;
+	if (modalElement.classList.contains('show')) return;
+
+	modalElement.classList.add('show');
+	modalElement.style.display = 'block';
+	modalElement.setAttribute('aria-hidden', 'false');
+
+	// create backdrop if it doesn't exist
+	if (!document.querySelector('.modal-backdrop')) {
+		const backdrop = document.createElement('div');
+		backdrop.className = 'modal-backdrop fade show';
+		document.body.appendChild(backdrop);
+		modalElement._backdrop = backdrop;
+
+		// click on backdrop hides modal
+		modalElement._backdropHandler = () => hideModalFallback(modalElement);
+		backdrop.addEventListener('click', modalElement._backdropHandler);
+	}
+
+	// Escape key closes modal
+	modalElement._escHandler = (e) => {
+		if (e.key === 'Escape') hideModalFallback(modalElement);
+	};
+	document.addEventListener('keydown', modalElement._escHandler);
+
+	document.body.classList.add('modal-open');
+}
+
+function hideModalFallback(modalElement) {
+	if (!modalElement) return;
+	if (!modalElement.classList.contains('show')) return;
+
+	modalElement.classList.remove('show');
+	modalElement.style.display = 'none';
+	modalElement.setAttribute('aria-hidden', 'true');
+
+	// remove backdrop if we created it
+	if (modalElement._backdrop) {
+		modalElement._backdrop.removeEventListener('click', modalElement._backdropHandler);
+		modalElement._backdrop.remove();
+		delete modalElement._backdropHandler;
+		delete modalElement._backdrop;
+	} else {
+		const backdrop = document.querySelector('.modal-backdrop');
+		if (backdrop) backdrop.remove();
+	}
+
+	// remove Escape handler
+	if (modalElement._escHandler) {
+		document.removeEventListener('keydown', modalElement._escHandler);
+		delete modalElement._escHandler;
+	}
+
+	document.body.classList.remove('modal-open');
+}
+
+function getModalInstance(modalElement) {
+	// If bootstrap is available use its Modal API, otherwise return a small shim
+	if (window.bootstrap && window.bootstrap.Modal) {
+		let instance = window.bootstrap.Modal.getInstance(modalElement);
+		if (!instance) instance = new window.bootstrap.Modal(modalElement);
+		return instance;
+	}
+	// shim with show() and hide()
+	return {
+		show() { showModalFallback(modalElement); },
+		hide() { hideModalFallback(modalElement); }
+	};
+}
+
+// Global delegation for data-bs-dismiss (works with real Bootstrap or the fallback)
+// Hides the nearest ancestor modal when a dismiss element is clicked
+document.addEventListener('click', (e) => {
+	const dismissEl = e.target.closest('[data-bs-dismiss="modal"], [data-bs-dismiss]');
+	if (!dismissEl) return;
+	const modalEl = dismissEl.closest('.modal');
+	if (!modalEl) return;
+	const inst = getModalInstance(modalEl);
+	if (inst && typeof inst.hide === 'function') inst.hide();
+});
+// --- End updated helpers ---
 
 // Función para crear un nuevo paquete
 function crearPaquete() {
@@ -93,7 +177,8 @@ function crearPaquete() {
   
   // Limpiar formulario y cerrar modal
   form.reset();
-  const modal = bootstrap.Modal.getInstance(document.getElementById('modalCrearPaquete'));
+  const modalElement = document.getElementById('modalCrearPaquete');
+  const modal = getModalInstance(modalElement);
   modal.hide();
 }
 
