@@ -240,14 +240,13 @@ async function fetchAllCards(query) {
     // Start progress based on number of images to load
     ProgressManager.start(allLoadedCards.length);
 
-    // Fast render: display cards immediately (don't block on images)
+    // PRELOAD: esperar a que todas las imágenes terminen de cargar/errorear antes de renderizar
+    await preloadImages(allLoadedCards);
+
+    // Fast render: ahora sí mostrar cartas (las imágenes ya fueron preloadadas)
     displayCards(allLoadedCards);
 
-    // Wait until all images in the rendered container have loaded/errored,
-    // ProgressManager.imageLoaded() will be called per image.
-    await waitForAllImagesLoad();
-
-    // Ensure progress finishes (ProgressManager will also finish when last image reports)
+    // Asegurar que el progress manager haya terminado (preloadImages llama a imageLoaded por cada imagen)
     ProgressManager.finish();
 
     // Configuración de filtros UI
@@ -258,6 +257,45 @@ async function fetchAllCards(query) {
     ProgressManager.finish();
     showErrorModal(`Error al cargar las cartas: ${error.message}`);
   }
+}
+
+// Nueva función: preload de imágenes con avance del ProgressManager
+function preloadImages(cards) {
+  return new Promise((resolve) => {
+    if (!cards || cards.length === 0) {
+      // marcar como cargado para evitar quedarse en 0
+      ProgressManager.imageLoaded();
+      return resolve();
+    }
+
+    let total = cards.length;
+    let done = 0;
+
+    cards.forEach(card => {
+      const src = card.images?.small || card.images?.large || '';
+      if (!src) {
+        done++;
+        ProgressManager.imageLoaded();
+        if (done >= total) resolve();
+        return;
+      }
+
+      const img = new Image();
+      const onFinish = () => {
+        img.removeEventListener('load', onFinish);
+        img.removeEventListener('error', onFinish);
+        done++;
+        ProgressManager.imageLoaded();
+        if (done >= total) resolve();
+      };
+
+      img.addEventListener('load', onFinish);
+      img.addEventListener('error', onFinish);
+      // asignar src al final para disparar carga
+      img.src = src;
+      // si ya estaba en cache, algunos navegadores disparan load inmediatamente
+    });
+  });
 }
 
 function buildApiUrl(query) {
@@ -793,17 +831,53 @@ async function handlePackageSelection(packageId, cardId) {
 function saveCardToPackage(packageId, card) {
   const mapKey = 'userPacksMap';
   const map = JSON.parse(localStorage.getItem(mapKey) || '{}');
+  const key = String(packageId);
 
-  if (!Array.isArray(map[packageId])) map[packageId] = [];
+  if (!Array.isArray(map[key])) map[key] = [];
 
-  // Evitar duplicados por id
-  if (map[packageId].some(c => c.id === card.id)) {
-    // Si ya existe, no duplicar; mostrar confirm rápido
+  // Evitar duplicados por id en el map
+  if (map[key].some(c => c.id === card.id)) {
     return;
   }
 
-  map[packageId].push(card);
+  // Guardar una versión ligera de la carta (evita duplicar todo el objeto grande)
+  const cardSummary = {
+    id: card.id,
+    name: card.name,
+    set: card.set?.name || null,
+    image: card.images?.small || card.images?.large || null
+  };
+
+  map[key].push(cardSummary);
   localStorage.setItem(mapKey, JSON.stringify(map));
+
+  // --- Sincronizar con 'paquetesCreados' para que la página de Paquetes muestre las cartas ---
+  try {
+    const paquetesKey = 'paquetesCreados';
+    const paquetes = JSON.parse(localStorage.getItem(paquetesKey) || '[]');
+
+    // Buscar el paquete por id (normalizando tipo)
+    const pkgIndex = paquetes.findIndex(p => String(p.id) === String(packageId));
+    if (pkgIndex !== -1) {
+      if (!Array.isArray(paquetes[pkgIndex].cartas)) paquetes[pkgIndex].cartas = [];
+
+      // Evitar duplicados por id dentro del paquete
+      if (!paquetes[pkgIndex].cartas.some(c => c.id === cardSummary.id)) {
+        paquetes[pkgIndex].cartas.push(cardSummary);
+        // Guardar cambios
+        localStorage.setItem(paquetesKey, JSON.stringify(paquetes));
+      }
+    }
+  } catch (err) {
+    console.error('Error sincronizando paquetesCreados:', err);
+  }
+
+  // Emitir evento por si otra parte de la app (otra pestaña / página) necesita actualizar UI
+  try {
+    window.dispatchEvent(new CustomEvent('pack-updated', { detail: { packageId: key, card: cardSummary } }));
+  } catch (e) {
+    // no crítico
+  }
 }
 
 // Mostrar modal de confirmación

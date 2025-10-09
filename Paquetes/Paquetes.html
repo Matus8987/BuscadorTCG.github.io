@@ -110,14 +110,23 @@
             <label for="tipoPokemon" class="form-label">Tipo de Pokémon (Opcional)</label>
             <select class="form-select" id="tipoPokemon">
               <option value="">Seleccionar tipo</option>
+              <!-- Lista de tipos de Pokémon -->
+              <option value="normal">Normal</option>
               <option value="grass">Planta</option>
               <option value="fire">Fuego</option>
               <option value="water">Agua</option>
               <option value="lightning">Eléctrico</option>
+              <option value="ice">Hielo</option>
+              <option value="flying">Volador</option>
+              <option value="poison">Veneno</option>
+              <option value="ground">Tierra</option>
+              <option value="rock">Roca</option>
+              <option value="bug">Bicho</option>
+              <option value="ghost">Fantasma</option>
               <option value="psychic">Psíquico</option>
               <option value="fighting">Lucha</option>
               <option value="darkness">Siniestro</option>
-              <option value="metal">Metal</option>
+              <option value="metal">Acero</option>
               <option value="fairy">Hada</option>
               <option value="dragon">Dragón</option>
             </select>
@@ -127,6 +136,27 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
         <button type="button" class="btn btn-warning" onclick="crearPaquete()">Crear Paquete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para mostrar detalles (cartas) de un paquete -->
+<div class="modal fade" id="modalDetallesPaquete" tabindex="-1" aria-labelledby="modalDetallesPaqueteLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalDetallesPaqueteLabel">Detalle del paquete</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <p id="descripcionPaquete" class="small text-muted"></p>
+        <ul id="listaCartasPaquete" class="list-group">
+          <!-- Se rellenará dinámicamente con <li class="list-group-item">...</li> -->
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
       </div>
     </div>
   </div>

@@ -216,18 +216,78 @@ function actualizarInterfazPaquetes() {
 function crearElementoPaquete(paquete) {
   const div = document.createElement('div');
   div.className = 'paquete-card';
-  
+  div.dataset.paqueteId = paquete.id; // permitir referencia al paquete
+
   let detallesExtra = [];
   if (paquete.rareza) detallesExtra.push(`Rareza: ${paquete.rareza}`);
   if (paquete.set) detallesExtra.push(`Set: ${paquete.set}`);
   if (paquete.tipo) detallesExtra.push(`Tipo: ${paquete.tipo}`);
-  
+
   div.innerHTML = `
     <div class="paquete-nombre">${paquete.nombre}</div>
     <div class="paquete-info">${paquete.numeroCartas} cartas disponibles</div>
     <div class="paquete-info">Creado: ${paquete.fechaCreacion}</div>
     ${detallesExtra.length > 0 ? `<div class="paquete-detalles">${detallesExtra.join(' • ')}</div>` : ''}
   `;
-  
+
+  // Al hacer click en la tarjeta, abrir el modal con las cartas de ese paquete
+  div.addEventListener('click', () => {
+    abrirModalDetallesPaquete(Number(div.dataset.paqueteId));
+  });
+
   return div;
+}
+
+// Nueva función: abre y rellena el modal de detalles de paquete
+function abrirModalDetallesPaquete(paqueteId) {
+  const paquete = paquetesCreados.find(p => p.id === paqueteId);
+  const modalElement = document.getElementById('modalDetallesPaquete');
+  const tituloEl = modalElement.querySelector('#modalDetallesPaqueteLabel');
+  const descripcionEl = modalElement.querySelector('#descripcionPaquete');
+  const listaEl = modalElement.querySelector('#listaCartasPaquete');
+
+  // Limpiar lista
+  listaEl.innerHTML = '';
+
+  if (!paquete) {
+    tituloEl.textContent = 'Paquete no encontrado';
+    descripcionEl.textContent = '';
+    const li = document.createElement('li');
+    li.className = 'list-group-item text-muted';
+    li.textContent = 'No se encontró información de este paquete.';
+    listaEl.appendChild(li);
+    const modal = getModalInstance(modalElement);
+    modal.show();
+    return;
+  }
+
+  // Título y descripción breve
+  tituloEl.textContent = paquete.nombre || 'Detalle del paquete';
+  descripcionEl.textContent = `Creado: ${paquete.fechaCreacion} • ${paquete.numeroCartas} cartas`;
+
+  const cartas = paquete.cartas || []; // si no existe, tratar como vacío
+
+  if (cartas.length === 0) {
+    const li = document.createElement('li');
+    li.className = 'list-group-item text-muted';
+    li.textContent = 'No hay cartas guardadas en este paquete.';
+    listaEl.appendChild(li);
+  } else {
+    // Soportar arrays de strings o de objetos { name: '...' } u objetos con título
+    cartas.forEach(carta => {
+      const li = document.createElement('li');
+      li.className = 'list-group-item';
+      if (typeof carta === 'string') {
+        li.textContent = carta;
+      } else if (carta && (carta.name || carta.title || carta.nombre)) {
+        li.textContent = carta.name || carta.title || carta.nombre;
+      } else {
+        li.textContent = JSON.stringify(carta);
+      }
+      listaEl.appendChild(li);
+    });
+  }
+
+  const modal = getModalInstance(modalElement);
+  modal.show();
 }
