@@ -143,17 +143,30 @@
 
 <!-- Modal para mostrar detalles (cartas) de un paquete -->
 <div class="modal fade" id="modalDetallesPaquete" tabindex="-1" aria-labelledby="modalDetallesPaqueteLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalDetallesPaqueteLabel">Detalle del paquete</h5>
+        <h5 class="modal-title" id="modalDetallesPaqueteLabel">Cartas del paquete</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body">
-        <p id="descripcionPaquete" class="small text-muted"></p>
-        <ul id="listaCartasPaquete" class="list-group">
-          <!-- Se rellenará dinámicamente con <li class="list-group-item">...</li> -->
-        </ul>
+        <p id="descripcionPaquete" class="small text-muted mb-3"></p>
+        <div id="carouselCartasPaquete" class="carousel slide" data-bs-ride="false">
+          <div class="carousel-inner" id="carouselCartasInner">
+            <!-- Se rellenará dinámicamente con carousel-item -->
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselCartasPaquete" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselCartasPaquete" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Siguiente</span>
+          </button>
+        </div>
+        <div id="mensajeNoCartas" class="text-center text-muted" style="display: none;">
+          <p>No hay cartas guardadas en este paquete.</p>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>

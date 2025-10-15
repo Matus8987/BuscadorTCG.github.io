@@ -44,8 +44,15 @@ function abrirModalCrearPaquete() {
   try {
     const modalElement = document.getElementById('modalCrearPaquete');
     if (modalElement) {
+      // Añadir animación de entrada
+      modalElement.classList.add('fade');
       const modal = getModalInstance(modalElement);
       modal.show();
+      
+      // Después de mostrar el modal, activar la animación
+      setTimeout(() => {
+        modalElement.classList.add('show');
+      }, 10);
     } else {
       console.error('Modal element not found');
     }
@@ -155,7 +162,7 @@ function crearPaquete() {
   const set = document.getElementById('setEspecifico').value.trim();
   const tipo = document.getElementById('tipoPokemon').value;
   
-  // Crear objeto paquete
+  // Crear objeto paquete vacío
   const nuevoPaquete = {
     id: Date.now(), // ID único basado en timestamp
     nombre: nombre,
@@ -163,7 +170,8 @@ function crearPaquete() {
     rareza: rareza,
     set: set,
     tipo: tipo,
-    fechaCreacion: new Date().toLocaleDateString()
+    fechaCreacion: new Date().toLocaleDateString(),
+    cartas: [] // Inicializar como array vacío
   };
   
   // Añadir al array de paquetes
@@ -238,56 +246,281 @@ function crearElementoPaquete(paquete) {
   return div;
 }
 
+// Nueva función para configurar la navegación manual del carousel
+function configurarNavegacionCarousel(carouselElement, totalCartas) {
+  let currentSlide = 0;
+  let isTransitioning = false;
+  
+  const prevButton = carouselElement.querySelector('.carousel-control-prev');
+  const nextButton = carouselElement.querySelector('.carousel-control-next');
+  const slides = carouselElement.querySelectorAll('.carousel-item');
+  
+  // Función para mostrar slide específico with animación
+  function showSlide(slideIndex, direction = 'next') {
+    if (isTransitioning) return;
+    isTransitioning = true;
+    
+    const currentSlideElement = slides[currentSlide];
+    const nextSlideElement = slides[slideIndex];
+    
+    // Añadir clases de animación de salida
+    if (direction === 'next') {
+      currentSlideElement.classList.add('slide-out-left');
+      nextSlideElement.classList.add('slide-in-right');
+    } else {
+      currentSlideElement.classList.add('slide-out-right');
+      nextSlideElement.classList.add('slide-in-left');
+    }
+    
+    // Después de la animación de salida
+    setTimeout(() => {
+      // Remover active del slide actual
+      currentSlideElement.classList.remove('active', 'slide-out-left', 'slide-out-right');
+      
+      // Activar nuevo slide
+      nextSlideElement.classList.add('active');
+      
+      // Después de que termine la animación de entrada
+      setTimeout(() => {
+        nextSlideElement.classList.remove('slide-in-left', 'slide-in-right');
+        isTransitioning = false;
+      }, 600);
+      
+    }, 400);
+    
+    currentSlide = slideIndex;
+  }
+  
+  // Remover event listeners anteriores si existen
+  if (prevButton._clickHandler) {
+    prevButton.removeEventListener('click', prevButton._clickHandler);
+  }
+  if (nextButton._clickHandler) {
+    nextButton.removeEventListener('click', nextButton._clickHandler);
+  }
+  
+  // Event listener para botón anterior
+  prevButton._clickHandler = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isTransitioning) return;
+    
+    const newIndex = currentSlide > 0 ? currentSlide - 1 : totalCartas - 1;
+    showSlide(newIndex, 'prev');
+  };
+  
+  // Event listener para botón siguiente
+  nextButton._clickHandler = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isTransitioning) return;
+    
+    const newIndex = currentSlide < totalCartas - 1 ? currentSlide + 1 : 0;
+    showSlide(newIndex, 'next');
+  };
+  
+  prevButton.addEventListener('click', prevButton._clickHandler);
+  nextButton.addEventListener('click', nextButton._clickHandler);
+  
+  // Navegación con teclado
+  const keydownHandler = function(e) {
+    if (carouselElement.closest('.modal.show')) {
+      if (e.key === 'ArrowLeft') {
+        prevButton._clickHandler(e);
+      } else if (e.key === 'ArrowRight') {
+        nextButton._clickHandler(e);
+      }
+    }
+  };
+  
+  document.addEventListener('keydown', keydownHandler);
+  
+  // Guardar referencia para poder limpiar después
+  carouselElement._keydownHandler = keydownHandler;
+}
+
 // Nueva función: abre y rellena el modal de detalles de paquete
 function abrirModalDetallesPaquete(paqueteId) {
   const paquete = paquetesCreados.find(p => p.id === paqueteId);
   const modalElement = document.getElementById('modalDetallesPaquete');
   const tituloEl = modalElement.querySelector('#modalDetallesPaqueteLabel');
   const descripcionEl = modalElement.querySelector('#descripcionPaquete');
-  const listaEl = modalElement.querySelector('#listaCartasPaquete');
+  const carouselInner = modalElement.querySelector('#carouselCartasInner');
+  const mensajeNoCartas = modalElement.querySelector('#mensajeNoCartas');
+  const carouselElement = modalElement.querySelector('#carouselCartasPaquete');
 
-  // Limpiar lista
-  listaEl.innerHTML = '';
+  // Limpiar carousel y event listeners previos
+  carouselInner.innerHTML = '';
+  if (carouselElement._keydownHandler) {
+    document.removeEventListener('keydown', carouselElement._keydownHandler);
+  }
 
   if (!paquete) {
     tituloEl.textContent = 'Paquete no encontrado';
     descripcionEl.textContent = '';
-    const li = document.createElement('li');
-    li.className = 'list-group-item text-muted';
-    li.textContent = 'No se encontró información de este paquete.';
-    listaEl.appendChild(li);
+    carouselElement.style.display = 'none';
+    mensajeNoCartas.style.display = 'block';
+    mensajeNoCartas.innerHTML = '<p>No se encontró información de este paquete.</p>';
+    
+    // Añadir animación y mostrar modal
+    modalElement.classList.add('fade');
     const modal = getModalInstance(modalElement);
     modal.show();
+    setTimeout(() => modalElement.classList.add('show'), 50);
     return;
   }
 
   // Título y descripción breve
-  tituloEl.textContent = paquete.nombre || 'Detalle del paquete';
-  descripcionEl.textContent = `Creado: ${paquete.fechaCreacion} • ${paquete.numeroCartas} cartas`;
+  tituloEl.textContent = `Cartas de: ${paquete.nombre}`;
+  const cartasActuales = paquete.cartas ? paquete.cartas.length : 0;
+  descripcionEl.textContent = `Creado: ${paquete.fechaCreacion} • ${cartasActuales}/${paquete.numeroCartas} cartas agregadas`;
 
-  const cartas = paquete.cartas || []; // si no existe, tratar como vacío
+  // Obtener cartas del paquete (pueden estar vacías)
+  const cartas = paquete.cartas || [];
 
   if (cartas.length === 0) {
-    const li = document.createElement('li');
-    li.className = 'list-group-item text-muted';
-    li.textContent = 'No hay cartas guardadas en este paquete.';
-    listaEl.appendChild(li);
+    carouselElement.style.display = 'none';
+    mensajeNoCartas.style.display = 'block';
+    mensajeNoCartas.innerHTML = `
+      <div class="text-center">
+        <i class="bi bi-folder-plus" style="font-size: 3rem; color: #bb5d00; margin-bottom: 15px;"></i>
+        <h5>Paquete vacío</h5>
+        <p>Este paquete aún no tiene cartas agregadas.</p>
+        <p class="small text-muted">Puedes agregar cartas desde la sección de cartas del buscador.</p>
+      </div>
+    `;
   } else {
-    // Soportar arrays de strings o de objetos { name: '...' } u objetos con título
-    cartas.forEach(carta => {
-      const li = document.createElement('li');
-      li.className = 'list-group-item';
-      if (typeof carta === 'string') {
-        li.textContent = carta;
-      } else if (carta && (carta.name || carta.title || carta.nombre)) {
-        li.textContent = carta.name || carta.title || carta.nombre;
-      } else {
-        li.textContent = JSON.stringify(carta);
-      }
-      listaEl.appendChild(li);
+    carouselElement.style.display = 'block';
+    mensajeNoCartas.style.display = 'none';
+
+    // Crear slides del carousel - cada carta en su propio slide
+    cartas.forEach((carta, index) => {
+      const carouselItem = document.createElement('div');
+      carouselItem.className = `carousel-item ${index === 0 ? 'active' : ''}`;
+      
+      const cartaHTML = crearHTMLCarta(carta);
+      carouselItem.innerHTML = cartaHTML;
+      
+      carouselInner.appendChild(carouselItem);
     });
+
+    // Configurar navegación manual del carousel
+    configurarNavegacionCarousel(carouselElement, cartas.length);
   }
 
+  // Añadir animación y mostrar modal
+  modalElement.classList.add('fade');
   const modal = getModalInstance(modalElement);
   modal.show();
+  setTimeout(() => modalElement.classList.add('show'), 50);
+}
+
+// Función auxiliar para crear el HTML de una carta
+function crearHTMLCarta(carta) {
+  // Manejar diferentes formatos de carta
+  let nombre = 'Carta sin nombre';
+  let imagen = '../Imagenes/carta-placeholder.png';
+  let tipo = '';
+  let rareza = '';
+  let set = '';
+  let precio = '';
+  let hp = '';
+
+  if (typeof carta === 'string') {
+    nombre = carta;
+  } else if (carta && typeof carta === 'object') {
+    nombre = carta.name || carta.title || carta.nombre || 'Carta sin nombre';
+    imagen = carta.images?.small || carta.image || carta.imagen || '../Imagenes/carta-placeholder.png';
+    tipo = carta.types ? carta.types.join(', ') : (carta.tipo || '');
+    rareza = carta.rarity || carta.rareza || '';
+    set = carta.set?.name || carta.set || '';
+    precio = carta.cardmarket?.prices?.averageSellPrice ? 
+             `$${carta.cardmarket.prices.averageSellPrice}` : 
+             (carta.precio || '');
+    hp = carta.hp || '';
+  }
+
+  return `
+    <div class="carta-contenido">
+      <img src="${imagen}" alt="${nombre}" class="carta-imagen" 
+           onerror="this.src='../Imagenes/carta-placeholder.png'">
+      <div class="carta-info">
+        <h3 class="carta-nombre">${nombre}</h3>
+        ${hp ? `<div class="carta-detalle">
+          <span class="carta-detalle-label">HP:</span>
+          <span class="carta-detalle-valor">${hp}</span>
+        </div>` : ''}
+        ${tipo ? `<div class="carta-detalle">
+          <span class="carta-detalle-label">Tipo:</span>
+          <span class="carta-detalle-valor">${tipo}</span>
+        </div>` : ''}
+        ${rareza ? `<div class="carta-detalle">
+          <span class="carta-detalle-label">Rareza:</span>
+          <span class="carta-detalle-valor">${rareza}</span>
+        </div>` : ''}
+        ${set ? `<div class="carta-detalle">
+          <span class="carta-detalle-label">Set:</span>
+          <span class="carta-detalle-valor">${set}</span>
+        </div>` : ''}
+        ${precio ? `<div class="carta-detalle">
+          <span class="carta-detalle-label">Precio:</span>
+          <span class="carta-detalle-valor">${precio}</span>
+        </div>` : ''}
+      </div>
+    </div>
+  `;
+}
+function crearHTMLCarta(carta) {
+  // Manejar diferentes formatos de carta
+  let nombre = 'Carta sin nombre';
+  let imagen = '../Imagenes/carta-placeholder.png';
+  let tipo = '';
+  let rareza = '';
+  let set = '';
+  let precio = '';
+  let hp = '';
+
+  if (typeof carta === 'string') {
+    nombre = carta;
+  } else if (carta && typeof carta === 'object') {
+    nombre = carta.name || carta.title || carta.nombre || 'Carta sin nombre';
+    imagen = carta.images?.small || carta.image || carta.imagen || '../Imagenes/carta-placeholder.png';
+    tipo = carta.types ? carta.types.join(', ') : (carta.tipo || '');
+    rareza = carta.rarity || carta.rareza || '';
+    set = carta.set?.name || carta.set || '';
+    precio = carta.cardmarket?.prices?.averageSellPrice ? 
+             `$${carta.cardmarket.prices.averageSellPrice}` : 
+             (carta.precio || '');
+    hp = carta.hp || '';
+  }
+
+  return `
+    <div class="carta-contenido">
+      <img src="${imagen}" alt="${nombre}" class="carta-imagen" 
+           onerror="this.src='../Imagenes/carta-placeholder.png'">
+      <div class="carta-info">
+        <h3 class="carta-nombre">${nombre}</h3>
+        ${hp ? `<div class="carta-detalle">
+          <span class="carta-detalle-label">HP:</span>
+          <span class="carta-detalle-valor">${hp}</span>
+        </div>` : ''}
+        ${tipo ? `<div class="carta-detalle">
+          <span class="carta-detalle-label">Tipo:</span>
+          <span class="carta-detalle-valor">${tipo}</span>
+        </div>` : ''}
+        ${rareza ? `<div class="carta-detalle">
+          <span class="carta-detalle-label">Rareza:</span>
+          <span class="carta-detalle-valor">${rareza}</span>
+        </div>` : ''}
+        ${set ? `<div class="carta-detalle">
+          <span class="carta-detalle-label">Set:</span>
+          <span class="carta-detalle-valor">${set}</span>
+        </div>` : ''}
+        ${precio ? `<div class="carta-detalle">
+          <span class="carta-detalle-label">Precio:</span>
+          <span class="carta-detalle-valor">${precio}</span>
+        </div>` : ''}
+      </div>
+    </div>
+  `;
 }

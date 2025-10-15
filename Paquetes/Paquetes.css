@@ -134,3 +134,450 @@ body{
   font-size: 0.8rem;
   margin-top: 10px;
 }
+
+/* Estilos para el carousel de cartas */
+#modalDetallesPaquete .modal-content {
+  background-color: rgba(40, 40, 60, 0.95);
+  color: white;
+  border: 2px solid #bb5d00;
+}
+
+#modalDetallesPaquete .modal-header {
+  border-bottom: 1px solid #bb5d00;
+}
+
+#modalDetallesPaquete .modal-footer {
+  border-top: 1px solid #bb5d00;
+}
+
+#modalDetallesPaquete .modal-title {
+  color: #FFCB05;
+  font-weight: 700;
+}
+
+#modalDetallesPaquete .btn-close {
+  filter: invert(1);
+}
+
+#carouselCartasPaquete {
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.carousel-inner {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.carousel-item {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-height: 450px;
+  padding: 15px;
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.carousel-item.active {
+  display: flex;
+  animation: slideInFromRight 0.6s ease-out;
+}
+
+.carousel-item.slide-out-left {
+  animation: slideOutToLeft 0.4s ease-in forwards;
+}
+
+.carousel-item.slide-out-right {
+  animation: slideOutToRight 0.4s ease-in forwards;
+}
+
+.carousel-item.slide-in-left {
+  animation: slideInFromLeft 0.6s ease-out;
+}
+
+.carousel-item.slide-in-right {
+  animation: slideInFromRight 0.6s ease-out;
+}
+
+.carta-contenido {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  max-width: 100%;
+  text-align: center;
+  animation: cardFadeIn 0.8s ease-out;
+}
+
+@keyframes cardFadeIn {
+  0% {
+    transform: translateY(30px) scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.carta-imagen {
+  width: 200px;
+  height: 280px;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  border: 2px solid #bb5d00;
+  transition: all 0.3s ease;
+}
+
+.carta-imagen:hover {
+  transform: scale(1.05) rotate(2deg);
+  box-shadow: 0 10px 30px rgba(187, 93, 0, 0.6);
+}
+
+.carta-info {
+  max-width: 450px;
+  width: 100%;
+}
+
+.carta-nombre {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #FFCB05;
+  margin-bottom: 15px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: titleGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes titleGlow {
+  0% {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 203, 5, 0.3);
+  }
+  100% {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 203, 5, 0.6);
+  }
+}
+
+.carta-detalle {
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  border-left: 3px solid #bb5d00;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+  animation: detailSlideIn 0.6s ease-out;
+  animation-fill-mode: both;
+}
+
+.carta-detalle:nth-child(1) { animation-delay: 0.1s; }
+.carta-detalle:nth-child(2) { animation-delay: 0.2s; }
+.carta-detalle:nth-child(3) { animation-delay: 0.3s; }
+.carta-detalle:nth-child(4) { animation-delay: 0.4s; }
+.carta-detalle:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes detailSlideIn {
+  0% {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.carta-detalle:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-left-color: #FFCB05;
+  transform: translateX(5px);
+}
+
+/* Animaciones para modales */
+.modal.fade .modal-dialog {
+  transform: translateY(-100vh) scale(0.8);
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  opacity: 0;
+}
+
+.modal.show .modal-dialog {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+/* Animaciones específicas para el modal de crear paquete */
+#modalCrearPaquete.fade .modal-dialog {
+  transform: translateY(-120vh) rotateX(15deg) scale(0.7);
+  transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+#modalCrearPaquete.show .modal-dialog {
+  transform: translateY(0) rotateX(0deg) scale(1);
+}
+
+/* Animaciones para el modal de detalles de paquete */
+#modalDetallesPaquete.fade .modal-dialog {
+  transform: translateY(-150vh) scale(0.5) rotateZ(-5deg);
+  transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#modalDetallesPaquete.show .modal-dialog {
+  transform: translateY(0) scale(1) rotateZ(0deg);
+}
+
+/* Animaciones para backdrop de modales */
+.modal-backdrop.fade {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.modal-backdrop.show {
+  opacity: 0.5;
+}
+
+/* Animación adicional para el contenido del modal */
+.modal.show .modal-content {
+  animation: modalContentBounce 0.6s ease-out 0.2s both;
+}
+
+@keyframes modalContentBounce {
+  0% {
+    transform: scale(0.9);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Animación para el header del modal */
+.modal.show .modal-header {
+  animation: headerSlideDown 0.5s ease-out 0.3s both;
+}
+
+@keyframes headerSlideDown {
+  0% {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Animación para el body del modal */
+.modal.show .modal-body {
+  animation: bodyFadeIn 0.6s ease-out 0.4s both;
+}
+
+@keyframes bodyFadeIn {
+  0% {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Animación para el footer del modal */
+.modal.show .modal-footer {
+  animation: footerSlideUp 0.5s ease-out 0.5s both;
+}
+
+@keyframes footerSlideUp {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Animaciones para slides del carousel */
+.carousel-item {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-height: 450px;
+  padding: 15px;
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.carousel-item.active {
+  display: flex;
+  animation: slideInFromRight 0.6s ease-out;
+}
+
+.carousel-item.slide-out-left {
+  animation: slideOutToLeft 0.4s ease-in forwards;
+}
+
+.carousel-item.slide-out-right {
+  animation: slideOutToRight 0.4s ease-in forwards;
+}
+
+.carousel-item.slide-in-left {
+  animation: slideInFromLeft 0.6s ease-out;
+}
+
+.carousel-item.slide-in-right {
+  animation: slideInFromRight 0.6s ease-out;
+}
+
+/* Keyframes para animaciones de slides */
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(100%) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-100%) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutToLeft {
+  0% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateX(-100%) scale(0.8);
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutToRight {
+  0% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateX(100%) scale(0.8);
+    opacity: 0;
+  }
+}
+
+/* Animaciones para controles del carousel */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: rgba(187, 93, 0, 0.9) !important;
+  border-radius: 50%;
+  width: 3rem !important;
+  height: 3rem !important;
+  border: 2px solid #FFCB05;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  position: relative;
+}
+
+.carousel-control-prev:hover .carousel-control-prev-icon,
+.carousel-control-next:hover .carousel-control-next-icon {
+  background-color: #bb5d00 !important;
+  transform: scale(1.2) rotate(360deg);
+  box-shadow: 0 6px 20px rgba(187, 93, 0, 0.8);
+  border-color: #FFCB05;
+}
+
+/* Animación de pulso para botones de control */
+@keyframes controlPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 203, 5, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 203, 5, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 203, 5, 0);
+  }
+}
+
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+  animation: controlPulse 1.5s infinite;
+}
+
+/* Responsive para pantallas más pequeñas */
+@media (max-width: 768px) {
+  .carta-contenido {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  .carta-imagen {
+    width: 180px;
+    height: 250px;
+  }
+  
+  .carta-nombre {
+    font-size: 1.3rem;
+  }
+  
+  .carousel-item {
+    min-height: 400px;
+    padding: 10px;
+  }
+  
+  .carousel-control-prev,
+  .carousel-control-next {
+    width: 10%;
+  }
+  
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+
+#mensajeNoCartas {
+  color: #cccccc;
+  font-size: 1.1rem;
+  padding: 40px 20px;
+}
+
+#mensajeNoCartas i {
+  display: block;
+  margin: 0 auto 15px;
+}
+
+#mensajeNoCartas h5 {
+  color: #FFCB05;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+#mensajeNoCartas p {
+  margin-bottom: 10px;
+}
