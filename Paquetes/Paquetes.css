@@ -160,7 +160,7 @@ body{
 }
 
 #carouselCartasPaquete {
-  max-width: 900px;
+  max-width: 700px;
   margin: 0 auto;
   position: relative;
 }
@@ -222,8 +222,8 @@ body{
 }
 
 .carta-imagen {
-  width: 200px;
-  height: 280px;
+  width: 180px;
+  height: 252px;
   object-fit: contain;
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
@@ -237,7 +237,7 @@ body{
 }
 
 .carta-info {
-  max-width: 450px;
+  max-width: 400px;
   width: 100%;
 }
 
@@ -536,8 +536,8 @@ body{
   }
   
   .carta-imagen {
-    width: 180px;
-    height: 246px;
+    width: 160px;
+    height: 224px;
   }
   
   .carta-nombre {
@@ -580,4 +580,86 @@ body{
 
 #mensajeNoCartas p {
   margin-bottom: 10px;
+}
+
+.paquete-botones {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-editar-paquete,
+.btn-eliminar-paquete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  border-radius: 8px;
+}
+
+.btn-editar-paquete:hover,
+.btn-eliminar-paquete:hover {
+  transform: scale(1.1);
+}
+
+.btn-editar-paquete:hover i {
+  background-color: #0056b3 !important;
+}
+
+.btn-eliminar-paquete:hover i {
+  background-color: #dc3545 !important;
+}
+
+/* Estilos específicos para el modal de crear paquete */
+#modalCrearPaquete .modal-content {
+  background-color: rgba(40, 40, 60, 0.95) !important;
+  color: white;
+  border: 2px solid #bb5d00;
+}
+
+#modalCrearPaquete .modal-header {
+  border-bottom: 1px solid #bb5d00;
+}
+
+#modalCrearPaquete .modal-footer {
+  border-top: 1px solid #bb5d00;
+}
+
+#modalCrearPaquete .modal-title {
+  color: #FFCB05;
+  font-weight: 700;
+}
+
+#modalCrearPaquete .form-label {
+  color: #FFCB05;
+  font-weight: 600;
+}
+
+#modalCrearPaquete .form-control,
+#modalCrearPaquete .form-select {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid #bb5d00;
+  color: white;
+}
+
+#modalCrearPaquete .form-control:focus,
+#modalCrearPaquete .form-select:focus {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: #FFCB05;
+  box-shadow: 0 0 0 0.25rem rgba(255, 203, 5, 0.25);
+  color: white;
+}
+
+#modalCrearPaquete .form-control::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+#modalCrearPaquete .form-select option {
+  background-color: #1d1d3d;
+  color: white;
+}
+
+#modalCrearPaquete .btn-close {
+  filter: invert(1);
 }

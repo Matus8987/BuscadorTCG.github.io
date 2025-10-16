@@ -236,14 +236,140 @@ function crearElementoPaquete(paquete) {
     <div class="paquete-info">${paquete.numeroCartas} cartas disponibles</div>
     <div class="paquete-info">Creado: ${paquete.fechaCreacion}</div>
     ${detallesExtra.length > 0 ? `<div class="paquete-detalles">${detallesExtra.join(' • ')}</div>` : ''}
+    <br>
+    <div class="paquete-botones">
+      <button class="btn-editar-paquete" title="Editar paquete">
+        <i class="bi bi-pencil-square" style="font-size: 20px;padding: 0px 10px 0px 10px;color: #ffffff;background-color: #0300b9ff;border-radius: 8px; margin-top: 14px; margin-bottom: 14px;"></i>
+      </button>
+      <button class="btn-eliminar-paquete" title="Eliminar paquete">
+        <i class="bi bi-trash" style="font-size: 20px;padding: 0px 10px 0px 10px;color: #ffffff;background-color: #b90000ff;border-radius: 8px; margin-top: 14px; margin-bottom: 14px;"></i>
+      </button>
+    </div>
   `;
 
-  // Al hacer click en la tarjeta, abrir el modal con las cartas de ese paquete
-  div.addEventListener('click', () => {
+  // Al hacer click en la tarjeta (pero no en los botones), abrir el modal con las cartas
+  div.addEventListener('click', (e) => {
+    // Verificar si el click fue en un botón de acción
+    if (e.target.closest('.btn-editar-paquete') || e.target.closest('.btn-eliminar-paquete')) {
+      return; // No abrir el modal si se clickeó un botón
+    }
     abrirModalDetallesPaquete(Number(div.dataset.paqueteId));
   });
 
+  // Event listener para botón de editar
+  const btnEditar = div.querySelector('.btn-editar-paquete');
+  btnEditar.addEventListener('click', (e) => {
+    e.stopPropagation(); // Prevenir que se abra el modal de detalles
+    editarPaquete(Number(div.dataset.paqueteId));
+  });
+
+  // Event listener para botón de eliminar
+  const btnEliminar = div.querySelector('.btn-eliminar-paquete');
+  btnEliminar.addEventListener('click', (e) => {
+    e.stopPropagation(); // Prevenir que se abra el modal de detalles
+    eliminarPaquete(Number(div.dataset.paqueteId));
+  });
+
   return div;
+}
+
+// Nueva función para editar un paquete
+function editarPaquete(paqueteId) {
+  const paquete = paquetesCreados.find(p => p.id === paqueteId);
+  if (!paquete) {
+    alert('Paquete no encontrado');
+    return;
+  }
+
+  // Llenar el formulario con los datos del paquete
+  document.getElementById('nombrePaquete').value = paquete.nombre;
+  document.getElementById('numeroCartas').value = paquete.numeroCartas;
+  document.getElementById('rarezaEspecifica').value = paquete.rareza || '';
+  document.getElementById('setEspecifico').value = paquete.set || '';
+  document.getElementById('tipoPokemon').value = paquete.tipo || '';
+
+  // Cambiar el título del modal
+  document.getElementById('modalCrearPaqueteLabel').textContent = 'Editar Paquete';
+  
+  // Cambiar el texto del botón
+  const btnCrear = document.querySelector('#modalCrearPaquete .btn-warning');
+  btnCrear.textContent = 'Guardar Cambios';
+  btnCrear.onclick = () => guardarCambiosPaquete(paqueteId);
+
+  // Abrir el modal
+  abrirModalCrearPaquete();
+}
+
+// Nueva función para guardar cambios de un paquete editado
+function guardarCambiosPaquete(paqueteId) {
+  const form = document.getElementById('formCrearPaquete');
+  
+  // Validar formulario
+  if (!form.checkValidity()) {
+    form.reportValidity();
+    return;
+  }
+
+  // Encontrar el paquete
+  const paqueteIndex = paquetesCreados.findIndex(p => p.id === paqueteId);
+  if (paqueteIndex === -1) {
+    alert('Paquete no encontrado');
+    return;
+  }
+
+  // Actualizar los datos del paquete
+  const paquete = paquetesCreados[paqueteIndex];
+  paquete.nombre = document.getElementById('nombrePaquete').value.trim();
+  paquete.numeroCartas = parseInt(document.getElementById('numeroCartas').value);
+  paquete.rareza = document.getElementById('rarezaEspecifica').value;
+  paquete.set = document.getElementById('setEspecifico').value.trim();
+  paquete.tipo = document.getElementById('tipoPokemon').value;
+
+  // Guardar en localStorage
+  localStorage.setItem('paquetesCreados', JSON.stringify(paquetesCreados));
+
+  // Actualizar la interfaz
+  actualizarInterfazPaquetes();
+
+  // Restaurar el modal a su estado original
+  restaurarModalCrear();
+
+  // Cerrar modal
+  const modalElement = document.getElementById('modalCrearPaquete');
+  const modal = getModalInstance(modalElement);
+  modal.hide();
+}
+
+// Nueva función para eliminar un paquete
+function eliminarPaquete(paqueteId) {
+  const paquete = paquetesCreados.find(p => p.id === paqueteId);
+  if (!paquete) {
+    alert('Paquete no encontrado');
+    return;
+  }
+
+  // Confirmar eliminación
+  if (confirm(`¿Estás seguro de que quieres eliminar el paquete "${paquete.nombre}"? Esta acción no se puede deshacer.`)) {
+    // Eliminar del array
+    paquetesCreados = paquetesCreados.filter(p => p.id !== paqueteId);
+    
+    // Guardar en localStorage
+    localStorage.setItem('paquetesCreados', JSON.stringify(paquetesCreados));
+    
+    // Actualizar la interfaz
+    actualizarInterfazPaquetes();
+  }
+}
+
+// Nueva función para restaurar el modal de crear a su estado original
+function restaurarModalCrear() {
+  document.getElementById('modalCrearPaqueteLabel').textContent = 'Crear Nuevo Paquete';
+  const btnCrear = document.querySelector('#modalCrearPaquete .btn-warning');
+  btnCrear.textContent = 'Crear Paquete';
+  btnCrear.onclick = crearPaquete;
+  
+  // Limpiar formulario
+  document.getElementById('formCrearPaquete').reset();
 }
 
 // Nueva función para configurar la navegación manual del carousel
