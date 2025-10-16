@@ -21,6 +21,9 @@ body {
     text-align: center;
     margin: 0 auto;
     transition: box-shadow 0.3s;
+    position: relative;
+    padding: 2rem 1.5rem;
+    overflow: visible;
   }
   
   .container:hover {
@@ -55,8 +58,8 @@ body {
   }
   
   button {
-    width: 70%;
-    padding: 12px;
+    width: 100%;
+    padding: 0.75rem;
     margin-top: 48px !important; /* Forzar aplicación del margen */
     background: linear-gradient(90deg, #cc0000 60%, #ff9900 100%);
     color: white;
@@ -181,4 +184,119 @@ body {
 .register-link a:hover {
   color: #cc0000;
   text-decoration: underline;
+}
+
+/* Estilos para el enlace de login/registro */
+.login-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding: 0 1rem;
+}
+
+.login-link p {
+    margin: 0;
+    word-wrap: break-word;
+    color: #ffffff;
+}
+
+.login-link a {
+    color: #ffa807;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-link a:hover {
+    color: #ffbf40;
+    text-decoration: underline;
+}
+
+/* Selector de idioma dentro del contenedor */
+.language-selector-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+}
+
+.language-selector-container .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    border: 1px solid #6c757d;
+    border-radius: 0.375rem;
+    background-color: transparent;
+    color: #6c757d;
+}
+
+.language-selector-container .btn:hover {
+    background-color: #6c757d;
+    color: white;
+}
+
+.language-selector-container .dropdown-menu {
+    min-width: 100px;
+    right: 0;
+    left: auto;
+    font-size: 0.875rem;
+}
+
+.container {
+    position: relative;
+    padding: 2rem 1.5rem;
+    overflow: visible;
+  }
+
+@media (max-width: 768px) {
+    .language-selector-container {
+        top: 8px;
+        right: 8px;
+    }
+    
+    .language-selector-container .btn {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.75rem;
+    }
+    
+    .container {
+        padding: 1.5rem 0.75rem;
+        margin-top: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .language-selector-container {
+        top: 5px;
+        right: 5px;
+    }
+    
+    .language-selector-container .btn {
+        padding: 0.15rem 0.3rem;
+        font-size: 0.7rem;
+    }
+    
+    .language-selector-container .dropdown-menu {
+        min-width: 90px;
+        font-size: 0.8rem;
+    }
+    
+    .container {
+        padding: 1rem 0.5rem;
+        margin-top: 1rem;
+    }
+    
+    button {
+        padding: 0.625rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .language-selector-container {
+        top: 3px;
+        right: 3px;
+    }
+    
+    .container {
+        max-width: 95%;
+        padding: 1rem 0.5rem;
+    }
 }

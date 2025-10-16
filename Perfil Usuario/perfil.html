@@ -16,7 +16,7 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Pokémon TCG</a>
+    <a class="navbar-brand" href="#" data-translate="nav.brand">Pokémon TCG</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -24,19 +24,31 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="../Perfil Usuario/perfil.html" style="color: white;">Inicio</a>
+          <a class="nav-link active" aria-current="page" href="../Perfil Usuario/perfil.html" style="color: white;" data-translate="nav.home">Inicio</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="../Cartas de Pokemon/BuscadorTCG.html" style="color: white;">Cartas</a>
+          <a class="nav-link" href="../Cartas de Pokemon/BuscadorTCG.html" style="color: white;" data-translate="nav.cards">Cartas</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="../Paquetes/Paquetes.html" style="color: white;">Paquetes</a>
+          <a class="nav-link" href="../Paquetes/Paquetes.html" style="color: white;" data-translate="nav.packs">Paquetes</a>
         </li>
       </ul>
-      <div id="userBar" class="navbar-nav ms-auto" style="display: none;">
-        <div class="nav-item d-flex align-items-center">
-          <span id="currentUserName" class="nav-link text-dark fw-semibold me-2" style="color: white !important;"></span>
-          <i class="bi bi-box-arrow-right nav-link" onclick="logout()" style="cursor: pointer; font-size: 18px; color: white !important;" title="Cerrar sesión"></i>
+      <div class="navbar-nav ms-auto d-flex flex-row align-items-center">
+        <!-- Dropdown de idiomas -->
+        <div class="nav-item dropdown me-3">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: white;">
+            <i class="bi bi-translate"></i>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#" onclick="changeLanguage('es')">Español</a></li>
+            <li><a class="dropdown-item" href="#" onclick="changeLanguage('en')">English</a></li>
+          </ul>
+        </div>
+        <div id="userBar" class="navbar-nav" style="display: none;">
+          <div class="nav-item d-flex align-items-center">
+            <span id="currentUserName" class="nav-link text-dark fw-semibold me-2" style="color: white !important;"></span>
+            <i class="bi bi-box-arrow-right nav-link" onclick="logout()" style="cursor: pointer; font-size: 18px; color: white !important;" title="Cerrar sesión"></i>
+          </div>
         </div>
       </div>
     </div>
@@ -47,25 +59,54 @@
       <div class="panel-usuario">
         <h2 id="nombreUsuario" style="text-align: center; font-family: 'Pokemon Solid', sans-serif; -webkit-text-stroke: 1px rgb(0, 0, 0); color: white; font-weight: 700; font-size: 340%;"></h2>
         <div class="info-usuario">
-          <p class="NumPaquetes">Paquetes: <span id="cantidadPaquetes"></span></p>
-          <p class="cartaFavorita">Carta Favorita:</p>
+          <p class="NumPaquetes"><span data-translate="profile.packs">Paquetes:</span> <span id="cantidadPaquetes"></span></p>
+          <p class="cartaFavorita" data-translate="profile.favoriteCard">Carta Favorita:</p>
           <div id="cartaFavoritaContainer" class="carta-favorita-container"></div>
         </div>
         </div>
       <div class="noCartas">
-        <h3>Todavía no has comenzado con tus paquetes con tus propias cartas</h3>
+        <h3 data-translate="profile.noPacks">Todavía no has comenzado con tus paquetes con tus propias cartas</h3>
       </div>
     </div>
     <!-- Modal de bienvenida a la página -->
   <div id="pageWelcomeModal" class="modal" style="display: none;">
     <div class="modal-content" style="text-align: center; max-width: 500px;">
-      <h3 style="color: #bb5d00; margin-bottom: 15px;">¡Buenas <span id="pageWelcomeUser"></span>!</h3>
-      <p style="margin-bottom: 20px; line-height: 1.5;">Busca las cartas de tu pokemon favorito, y escoge esas cartas que tanto desearias tener</p>
-      <strong>(La ludopatia se vende por separado)</strong>
+      <h3 style="color: #bb5d00; margin-bottom: 15px;"><span data-translate="profile.welcome.greeting">¡Buenas</span> <span id="pageWelcomeUser"></span>!</h3>
+      <p style="margin-bottom: 20px; line-height: 1.5;" data-translate="profile.welcome.message">Busca las cartas de tu pokemon favorito, y escoge esas cartas que tanto desearias tener</p>
+      <strong data-translate="profile.welcome.warning">(La ludopatia se vende por separado)</strong>
       <img src="../Imagenes/pikachu.gif" style="margin-bottom: 5%;" > <!-- Imagen de Pikachu animado -->
-      <p style="margin-bottom: 20px; font-style: italic; color: #666; font-size: 0.9em;">Pikachu aventándose los pasos prohibidos</p>
-      <button onclick="closeWelcomeModal()" style="padding: 10px 30px; background: #bb5d00; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Comenzar</button>
+      <p style="margin-bottom: 20px; font-style: italic; color: #666; font-size: 0.9em;" data-translate="profile.welcome.pikachu">Pikachu aventándose los pasos prohibidos</p>
+      <button onclick="closeWelcomeModal()" style="padding: 10px 30px; background: #bb5d00; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;" data-translate="profile.welcome.start">Comenzar</button>
     </div>
   </div>
+  
+  <!-- Script de traducción cargado dinámicamente -->
+  <script>
+  // Cargar el traductor dinámicamente para evitar conflictos
+  function loadTranslator() {
+      return new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = '../Traduccion/translator.js';
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+      });
+  }
+
+  // Inicializar después de cargar todo
+  document.addEventListener('DOMContentLoaded', function() {
+      loadTranslator().then(() => {
+          setTimeout(() => {
+              if (typeof changeLanguage === 'function') {
+                  const savedLanguage = localStorage.getItem('selectedLanguage') || 'es';
+                  updateTranslations(savedLanguage);
+                  console.log('Translator loaded and initialized in Perfil');
+              }
+          }, 200);
+      }).catch(error => {
+          console.error('Error loading translator:', error);
+      });
+  });
+  </script>
 </body>
 </html>

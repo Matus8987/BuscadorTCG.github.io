@@ -561,6 +561,86 @@ body{
   }
 }
 
+/* Mejoras de responsividad */
+.paquetes-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    padding: 0 1rem;
+}
+
+.contenedor-crear-paquete {
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+.btn-crear-paquete {
+    width: 100%;
+    max-width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+}
+
+.titulo-paquetes {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+/* Responsividad para modales */
+@media (max-width: 768px) {
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    .modal-lg {
+        max-width: 95%;
+    }
+    
+    .paquetes-grid {
+        grid-template-columns: 1fr;
+        padding: 0 0.5rem;
+    }
+    
+    .container {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .modal-dialog {
+        margin: 0.25rem;
+    }
+    
+    .modal-content {
+        border-radius: 0.5rem;
+    }
+    
+    .titulo-paquetes {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .btn-crear-paquete {
+        max-width: 60px;
+        height: 60px;
+    }
+    
+    .btn-crear-paquete i {
+        font-size: 20px !important;
+        margin: 8px !important;
+    }
+}
+
 #mensajeNoCartas {
   color: #cccccc;
   font-size: 1.1rem;
@@ -662,4 +742,51 @@ body{
 
 #modalCrearPaquete .btn-close {
   filter: invert(1);
+}
+
+/* Mejoras de responsividad para navbar */
+@media (max-width: 991px) {
+    .navbar-nav.ms-auto {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        margin-top: 1rem;
+    }
+    
+    .nav-item.dropdown {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    #userBar {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    
+    #userBar .nav-item {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    .dropdown-menu {
+        position: static !important;
+        width: 100%;
+        box-shadow: none;
+        border: 1px solid #dee2e6;
+        margin-top: 0.25rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1rem;
+    }
+    
+    .nav-link {
+        padding: 0.5rem 0;
+    }
+    
+    .navbar-toggler {
+        padding: 0.25rem 0.5rem;
+        font-size: 1rem;
+    }
 }

@@ -650,3 +650,21 @@ function crearHTMLCarta(carta) {
     </div>
   `;
 }
+// Verificar que el traductor esté disponible antes de usarlo
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof changeLanguage === 'function') {
+        console.log('Translator loaded successfully');
+        const savedLanguage = localStorage.getItem('selectedLanguage') || 'es';
+        updateTranslations(savedLanguage);
+    } else {
+        console.error('Translator not loaded');
+        // Recargar el script si no está disponible
+        const script = document.createElement('script');
+        script.src = '../Traduccion/translator.js';
+        script.onload = function() {
+            const savedLanguage = localStorage.getItem('selectedLanguage') || 'es';
+            updateTranslations(savedLanguage);
+        };
+        document.head.appendChild(script);
+    }
+});

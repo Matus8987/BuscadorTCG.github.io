@@ -21,6 +21,7 @@ body {
     text-align: center;
     margin: 0 auto;
     transition: box-shadow 0.3s;
+    position: relative;
   }
   
   .container:hover {
@@ -131,3 +132,127 @@ body {
       pointer-events: none;
     }
   }
+  
+  /* Selector de idioma flotante */
+.language-selector {
+    display: none;
+}
+
+.language-selector-container {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 1000;
+}
+
+/* Mejoras de responsividad */
+.container {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 3% 1rem;
+}
+
+.tituloh1 {
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    text-align: center;
+    margin-bottom: 2rem;
+    word-wrap: break-word;
+}
+
+input[type="text"], 
+input[type="password"] {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 0.375rem;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding: 0 1rem;
+}
+
+.login-link p {
+    margin: 0;
+    word-wrap: break-word;
+    color: #ffffff;
+}
+
+.login-link a {
+    color: #ffa807;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-link a:hover {
+    color: #ffbf40;
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .language-selector-container {
+        top: 10px;
+        right: 10px;
+    }
+    
+    .container {
+        padding: 0 0.75rem;
+        margin-top: 1rem;
+    }
+    
+    .tituloh1 {
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .language-selector-container .btn {
+        padding: 0.375rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .container {
+        padding: 0 0.5rem;
+    }
+    
+    input[type="text"], 
+    input[type="password"] {
+        padding: 0.625rem;
+        font-size: 0.9rem;
+    }
+    
+    button {
+        padding: 0.625rem;
+        font-size: 0.9rem;
+    }
+    
+    .login-link {
+        margin-top: 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .tituloh1 {
+        font-size: 1.5rem;
+    }
+    
+    .container {
+        max-width: 95%;
+    }
+}

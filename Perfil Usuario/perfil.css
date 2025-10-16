@@ -136,3 +136,54 @@ body{
 #pageWelcomeModal button {
   margin-top: 15px;
 }
+
+/* Mejoras de responsividad para navbar */
+@media (max-width: 991px) {
+    .navbar-nav.ms-auto {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        margin-top: 1rem;
+        padding: 1rem;
+    }
+    
+    .nav-item.dropdown {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    #userBar {
+        width: 100%;
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+    }
+    
+    #userBar .nav-item {
+        width: 100%;
+        justify-content: flex-start;
+        padding: 0.5rem;
+    }
+    
+    .dropdown-menu {
+        position: static !important;
+        width: 100%;
+        box-shadow: none;
+        border: 1px solid #dee2e6;
+        margin-top: 0.25rem;
+        padding: 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1rem;
+    }
+    
+    .nav-link {
+        padding: 0.5rem 0;
+    }
+    
+    .navbar-toggler {
+        padding: 0.25rem 0.5rem;
+        font-size: 1rem;
+    }
+}
