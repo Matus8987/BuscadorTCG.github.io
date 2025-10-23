@@ -31,6 +31,10 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="../Paquetes/Paquetes.html" style="color: white;" data-translate="nav.packs">Paquetes</a>
         </li>
+        <!-- Nuevo enlace a la trivia -->
+          <li class="nav-item">
+            <a class="nav-link" style="color: white;" href="../PreguntasTrivia/trivia.html" data-translate="nav.questions">Preguntas</a>
+          </li>
       </ul>
       <div class="navbar-nav ms-auto d-flex flex-row align-items-center">
         <!-- Dropdown de idiomas -->
@@ -47,7 +51,8 @@
         <div id="userBar" class="navbar-nav" style="display: none;">
           <div class="nav-item d-flex align-items-center">
             <span id="currentUserName" class="nav-link text-dark fw-semibold me-2" style="color: white !important;"></span>
-            <i class="bi bi-box-arrow-right nav-link" onclick="logout()" style="cursor: pointer; font-size: 18px; color: white !important;" title="Cerrar sesión"></i>
+            <!-- title convertido a data-translate-title -->
+            <i class="bi bi-box-arrow-right nav-link" onclick="logout()" style="cursor: pointer; font-size: 18px; color: white !important;" data-translate-title="nav.logout"></i>
           </div>
         </div>
       </div>
@@ -59,11 +64,11 @@
 <div class="container mt-4">
     <h1 class="titulo-paquetes" data-translate="packs.title">Paquetes Pokémon TCG</h1>
     <div id="paquetes-container" class="paquetes-grid">
-      <div class="contenedor-crear-paquete">
-        <button type="button" class="btn-crear-paquete">
-          <i class="bi bi-plus-lg" style="font-size: 27px;padding: 0px 10px 0px 10px;color: #ffffff;background-color: #b95c00;border-radius: 8px; margin-top: 14px; margin-bottom: 14px;"></i>
+      <div class="contenedor-crear-paquete d-flex justify-content-center align-items-center flex-column" style="width:100%;">
+        <button type="button" class="btn-crear-paquete" aria-label="Crear paquete">
+          <i class="bi bi-plus-lg" style="font-size: 27px;padding: 0px 10px 0px 10px;background-color: #b95c00;border-radius: 8px; margin-top: 14px; margin-bottom: 14px; color: #ffffff;"></i>
         </button>
-        <h5 style="text-align: center;" data-translate="packs.create">Comienza creando un nuevo paquete</h5>
+        <h5 style="text-align: center;" data-translate="packs.create">Nuevo Paquete</h5>
       </div>
     </div>
 </div>
@@ -74,7 +79,8 @@
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="modalCrearPaqueteLabel" data-translate="modal.create.title">Nuevo Paquete</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <!-- aria-label convertido a data-translate-aria -->
+        <button type="button" class="btn-close" data-bs-dismiss="modal" data-translate-aria="modal.close"></button>
       </div>
       <div class="modal-body">
         <form id="formCrearPaquete">
@@ -160,7 +166,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modalDetallesPaqueteLabel" data-translate="modal.details.title">Cartas del paquete</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" data-translate-aria="modal.close"></button>
       </div>
       <div class="modal-body">
         <p id="descripcionPaquete" class="small text-muted mb-3"></p>
@@ -170,11 +176,11 @@
           </div>
           <button class="carousel-control-prev" type="button" data-bs-target="#carouselCartasPaquete" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Anterior</span>
+            <span class="visually-hidden" data-translate="carousel.prev">Anterior</span>
           </button>
           <button class="carousel-control-next" type="button" data-bs-target="#carouselCartasPaquete" data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Siguiente</span>
+            <span class="visually-hidden" data-translate="carousel.next">Siguiente</span>
           </button>
         </div>
         <div id="mensajeNoCartas" class="text-center text-muted" style="display: none;">

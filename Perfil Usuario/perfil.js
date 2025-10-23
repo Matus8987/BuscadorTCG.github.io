@@ -40,13 +40,17 @@ function displayFavoriteCard() {
   
   if (favoriteCard && cartaFavoritaContainer) {
     const card = JSON.parse(favoriteCard);
+    // Usar helper de traducción expuesto por translator.js si está disponible
+    const t = window.t || ((k) => (localStorage.getItem('selectedLanguage') === 'en' ? k : k));
+    const favoriteLabel = (typeof t === 'function') ? t('profile.favoriteCard') : 'Carta Favorita:';
     cartaFavoritaContainer.innerHTML = `
       <div class="favorite-card-display">
-        <img src="${card.images?.small || ''}" alt="Carta favorita: ${card.name}" class="favorite-card-image">
+        <img src="${card.images?.small || ''}" alt="${favoriteLabel} ${card.name || ''}" class="favorite-card-image">
       </div>
     `;
   } else if (cartaFavoritaContainer) {
-    cartaFavoritaContainer.innerHTML = '<p class="no-favorite">Ninguna carta seleccionada</p>';
+    // Insertar elemento marcado para traducción por el translator.js
+    cartaFavoritaContainer.innerHTML = '<p data-translate="noCardSelected" class="no-favorite"></p>';
   }
 }
 

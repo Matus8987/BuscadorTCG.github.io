@@ -6,7 +6,7 @@ function register() {
     if (user && pass) {
         localStorage.setItem("user", user);
         localStorage.setItem("pass", pass);
-        alert("Usuario registrado correctamente ✅");
+        alert("Usuario registrado correctamente");
 
         // Animación de transición para contenedor y título
         const container = document.querySelector('.container');
@@ -18,6 +18,6 @@ function register() {
             window.location.href = "Login/login.html";
         }, 800);
     } else {
-      alert("⚠️ Complete todos los campos");
+      alert("Complete todos los campos");
     }
   }

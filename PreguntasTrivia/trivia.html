@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="es">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title data-translate="trivia.title">Preguntas Pokémon</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://fonts.cdnfonts.com/css/pokemon-solid" rel="stylesheet">
+	<link rel="stylesheet" href="css/trivia.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
+<body>
+	<!-- Navbar (escala 1:1 con BuscadorTCG.html) -->
+	<nav class="navbar navbar-expand-lg bg-body-tertiary">
+	  <div class="container-fluid">
+	    <a class="navbar-brand" href="#" data-translate="nav.brand">Pokémon TCG</a>
+	    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+	      <span class="navbar-toggler-icon"></span>
+	    </button>
+	    <div class="collapse navbar-collapse" id="navbarNav">
+	      <ul class="navbar-nav me-auto">
+	        <li class="nav-item">
+	          <a class="nav-link " style="color: white;" aria-current="page" href="../Perfil Usuario/perfil.html" data-translate="nav.home">Inicio</a>
+	        </li>
+	        <li class="nav-item">
+	          <a class="nav-link" style="color: white;" href="../Cartas de Pokemon/BuscadorTCG.html" data-translate="nav.cards">Cartas</a>
+	        </li>
+	        <li class="nav-item">
+	          <a class="nav-link" style="color: white;" href="../Paquetes/Paquetes.html" data-translate="nav.packs">Paquetes</a>
+	        </li>
+	        <li class="nav-item">
+	          <a class="nav-link active" style="color: white;" href="../PreguntasTrivia/trivia.html" data-translate="nav.questions">Preguntas</a>
+	        </li>
+	      </ul>
+	      <div class="navbar-nav ms-auto d-flex flex-row align-items-center">
+	        <div class="nav-item dropdown me-3">
+	          <a id="languageDropdownToggle" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: white;">
+	            <i class="bi bi-translate"></i>
+	          </a>
+	          <ul class="dropdown-menu">
+	            <li><a class="dropdown-item" href="#" onclick="changeLanguage('es')">Español</a></li>
+	            <li><a class="dropdown-item" href="#" onclick="changeLanguage('en')">English</a></li>
+	          </ul>
+	        </div>
+	        <div id="userBar" class="navbar-nav" style="display: none;">
+	          <div class="nav-item d-flex align-items-center">
+	            <span id="currentUserName" class="nav-link text-dark fw-semibold me-2" style="color: white !important;"></span>
+	            <i class="bi bi-box-arrow-right nav-link" onclick="logout()" style="cursor: pointer; font-size: 18px; color: white;" title="Cerrar sesión"></i>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	</nav>
+
+	<!-- Contenedor principal reutilizando page-wrapper para apariencia idéntica -->
+	<div class="page-wrapper">
+	  <header>
+	    <h1 data-translate="trivia.title">Preguntas Pokémon</h1>
+	  </header>
+
+	  <main>
+	    <p id="last-score" class="text-center text-muted" style="color: white !important;">Último puntaje: —</p>
+	    <div id="game-area" class="d-flex flex-column align-items-stretch">
+	      <div class="d-flex justify-content-between align-items-center mb-3">
+	        <div id="question-count">Pregunta 0 / 0</div>
+	        <div class="text-end">
+	          <span id="score" class="badge bg-primary">Puntaje: 0</span>
+	        </div>
+	      </div>
+
+	      <!-- Card image y barra de progreso/temporizador -->
+	      <div class="d-flex justify-content-center mb-3">
+	        <div id="card-image-wrapper" class="card-img-container">
+	          <img id="card-image" src="" alt="Pokémon" />
+	        </div>
+	      </div>
+
+	      <div class="mb-2">
+	        <div class="progress" style="height:10px;">
+	          <div id="question-progress" class="progress-bar" role="progressbar" style="width:0%"></div>
+	        </div>
+	        <div class="d-flex justify-content-end mt-1">
+	          <small id="timer" class="text-muted" style="color: white !important;">-- s</small>
+	        </div>
+	      </div>
+
+	      <div id="question-card" class="card mb-3">
+	        <div class="card-body">
+	          <p id="question-text" class="mb-0">Cargando pregunta...</p>
+	        </div>
+	      </div>
+
+	      <div id="answers" class="d-grid gap-2 mb-3">
+	        <!-- botones de respuesta insertados por JS -->
+	      </div>
+
+	      <div class="d-flex justify-content-between">
+	        <button id="next-btn" class="btn btn-outline-secondary" disabled data-translate="trivia.button.next">Siguiente</button>
+	        <button id="restart-btn" class="btn btn-danger" data-translate="trivia.button.restart">Reiniciar</button>
+	      </div>
+	    </div>
+
+	    <div id="result-area" class="d-none text-center mt-3">
+	      <h3 data-translate="trivia.result.title">Juego terminado</h3>
+	      <p id="final-score" class="h4"></p>
+	      <button id="play-again-btn" class="btn btn-success" data-translate="trivia.button.playAgain">Jugar otra vez</button>
+	    </div>
+	  </main>
+	</div>
+
+	<!-- Scripts -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+	<!-- Cargar el traductor (igual que en BuscadorTCG) -->
+	<script>
+	function loadTranslator() {
+	    return new Promise((resolve, reject) => {
+	        const script = document.createElement('script');
+	        script.src = '../Traduccion/translator.js';
+	        script.onload = resolve;
+	        script.onerror = reject;
+	        document.head.appendChild(script);
+	    });
+	}
+
+	// Inicializar traducciones antes de cargar trivia.js
+	document.addEventListener('DOMContentLoaded', function() {
+	    loadTranslator().then(() => {
+	        setTimeout(() => {
+	            const savedLanguage = localStorage.getItem('selectedLanguage') || 'es';
+	            updateTranslations(savedLanguage);
+	        }, 150);
+	    }).catch(err => console.error('Error loading translator:', err));
+	});
+	</script>
+
+	<script src="js/trivia.js"></script>
+</body>
+</html>

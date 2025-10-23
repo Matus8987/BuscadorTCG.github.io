@@ -32,6 +32,10 @@
         <li class="nav-item">
           <a class="nav-link" href="../Paquetes/Paquetes.html" style="color: white;" data-translate="nav.packs">Paquetes</a>
         </li>
+        <!-- Nuevo enlace a la trivia -->
+          <li class="nav-item">
+            <a class="nav-link" style="color: white;" href="../PreguntasTrivia/trivia.html" data-translate="nav.questions">Preguntas</a>
+          </li>
       </ul>
       <div class="navbar-nav ms-auto d-flex flex-row align-items-center">
         <!-- Dropdown de idiomas -->
@@ -48,7 +52,7 @@
         <div id="userBar" class="navbar-nav" style="display: none;">
           <div class="nav-item d-flex align-items-center">
             <span id="currentUserName" class="nav-link text-dark fw-semibold me-2" style="color: white !important;"></span>
-            <i class="bi bi-box-arrow-right nav-link" onclick="logout()" style="cursor: pointer; font-size: 18px; color: white !important;" title="Cerrar sesión"></i>
+            <i class="bi bi-box-arrow-right nav-link" onclick="logout()" style="cursor: pointer; font-size: 18px; color: white !important;" data-translate-title="nav.logout"></i>
           </div>
         </div>
       </div>
@@ -62,7 +66,9 @@
         <div class="info-usuario">
           <p class="NumPaquetes"><span data-translate="profile.packs">Paquetes:</span> <span id="cantidadPaquetes"></span></p>
           <p class="cartaFavorita" data-translate="profile.favoriteCard">Carta Favorita:</p>
-          <div id="cartaFavoritaContainer" class="carta-favorita-container"></div>
+          <div id="cartaFavoritaContainer" class="carta-favorita-container">
+            <p data-translate="noCardSelected">Ninguna carta seleccionada</p>
+          </div>
         </div>
         </div>
       <div class="noCartas">

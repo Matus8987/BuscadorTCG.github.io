@@ -5,7 +5,8 @@ const translations = {
         'nav.cards': 'Cartas',
         'nav.packs': 'Paquetes',
         'packs.title': 'Paquetes Pokémon TCG',
-        'packs.create': 'Comienza creando un nuevo paquete',
+        'packs.create': 'Nuevo Paquete',
+        'packs.create.new': 'Nuevo Paquete',
         'modal.create.title': 'Nuevo Paquete',
         'modal.create.name': 'Nombre del Paquete *',
         'modal.create.cards': 'Número de cartas disponibles *',
@@ -77,7 +78,50 @@ const translations = {
         'login.password': 'Contraseña',
         'login.button': 'Iniciar Sesión',
         'login.noAccount': '¿No tienes una cuenta?',
-        'login.registerLink': 'Regístrate'
+        'login.registerLink': 'Regístrate',
+        'nav.logout': 'Cerrar sesión',
+        'carousel.prev': 'Anterior',
+        'carousel.next': 'Siguiente',
+        'welcome.title': 'Bienvenido,',
+        'welcome.message': '¡Iniciaste sesión correctamente!',
+        // Nuevas claves para alertas
+        'alert.register.success': 'Registro completado correctamente.',
+        'alert.register.error': 'Error al registrar el usuario.',
+        'alert.login.success': 'Inicio de sesión correcto.',
+        'alert.login.error': 'Usuario o contraseña incorrectos.',
+        'alert.pack.created': 'Paquete creado correctamente.',
+        'alert.pack.error': 'Error al crear el paquete.',
+        'alert.card.saved': 'Carta añadida al paquete.',
+        'alert.card.save.error': 'Error al guardar la carta.',
+        'alert.confirm.delete': '¿Estás seguro de que deseas eliminarlo?',
+        'paquete.cardsAvailable': 'cartas disponibles',
+        'paquete.created': 'Creado:',
+        'paquete.rareza': 'Rareza:',
+        'paquete.set': 'Set:',
+        'paquete.tipo': 'Tipo:',
+        'paquete.edit': 'Editar paquete',
+        'paquete.delete': 'Eliminar paquete',
+        // modal editar/guardar
+        'modal.create.editTitle': 'Editar Paquete',
+        'modal.create.saveChanges': 'Guardar Cambios',
+        'noCardSelected': 'Ninguna carta seleccionada',
+        'nav.questions': 'Preguntas',
+        // Traducciones para Trivia
+        'trivia.title': 'Preguntas Pokémon',
+        'trivia.lastScore': 'Último puntaje: {score}',
+        'trivia.score': 'Puntaje: {score}',
+        'trivia.button.next': 'Siguiente',
+        'trivia.button.restart': 'Reiniciar',
+        'trivia.button.playAgain': 'Jugar otra vez',
+        'trivia.q.who': '¿Quién es ese Pokémon?',
+        'trivia.q.generation': '¿En qué generación salió este Pokémon?',
+        'trivia.q.type': '¿Cuál es el/los tipo(s) de este Pokémon?',
+        'trivia.q.pokedex': '¿Cuál es el número Pokédex de este Pokémon?',
+        'trivia.q.multiple': '¿Este Pokémon tiene más de un tipo?',
+        'trivia.option.yes': 'Sí',
+        'trivia.option.no': 'No',
+        'trivia.result.title': 'Juego terminado',
+        'trivia.result.message': 'Obtuviste {score} puntos de {max}'
     },
     en: {
         'nav.brand': 'Pokémon TCG',
@@ -86,6 +130,7 @@ const translations = {
         'nav.packs': 'Packs',
         'packs.title': 'Pokémon TCG Packs',
         'packs.create': 'Start by creating a new pack',
+        'packs.create.new': 'New Package',
         'modal.create.title': 'New Pack',
         'modal.create.name': 'Pack Name *',
         'modal.create.cards': 'Number of available cards *',
@@ -140,14 +185,67 @@ const translations = {
         'login.button': 'Sign In',
         'login.noAccount': 'Don\'t have an account?',
         'login.registerLink': 'Register',
+        'nav.logout': 'Log out',
+        'carousel.prev': 'Previous',
+        'carousel.next': 'Next',
+        'welcome.title': 'Welcome,',
+        'welcome.message': 'You have successfully signed in!',
+        // Nuevas claves para alertas (EN)
+        'alert.register.success': 'Registration completed successfully.',
+        'alert.register.error': 'Error registering the user.',
+        'alert.login.success': 'Successfully signed in.',
+        'alert.login.error': 'Incorrect username or password.',
+        'alert.pack.created': 'Pack created successfully.',
+        'alert.pack.error': 'Error creating the pack.',
+        'alert.card.saved': 'Card added to the pack.',
+        'alert.card.save.error': 'Error saving the card.',
+        'alert.confirm.delete': 'Are you sure you want to delete this?',
+        'paquete.cardsAvailable': 'cards available',
+        'paquete.created': 'Created:',
+        'paquete.rareza': 'Rarity:',
+        'paquete.set': 'Set:',
+        'paquete.tipo': 'Type:',
+        'paquete.edit': 'Edit pack',
+        'paquete.delete': 'Delete pack',
+        // modal editar/guardar
+        'modal.create.editTitle': 'Edit Pack',
+        'modal.create.saveChanges': 'Save Changes',
+        'noCardSelected': 'No card selected',
+        'nav.questions': 'Questions',
+        // Translations for Trivia
+        'trivia.title': 'Pokémon Questions',
+        'trivia.lastScore': 'Last score: {score}',
+        'trivia.score': 'Score: {score}',
+        'trivia.button.next': 'Next',
+        'trivia.button.restart': 'Restart',
+        'trivia.button.playAgain': 'Play again',
+        'trivia.q.who': 'Who is that Pokémon?',
+        'trivia.q.generation': 'In which generation did this Pokémon appear?',
+        'trivia.q.type': 'What is the type(s) of this Pokémon?',
+        'trivia.q.pokedex': 'What is this Pokémon\'s Pokédex number?',
+        'trivia.q.multiple': 'Does this Pokémon have more than one type?',
+        'trivia.option.yes': 'Yes',
+        'trivia.option.no': 'No',
+        'trivia.result.title': 'Game over',
+        'trivia.result.message': 'You scored {score} out of {max}'
     }
 };
 
 function changeLanguage(lang) {
     console.log(`Changing language to: ${lang}`);
+    // Guardar idioma
     localStorage.setItem('selectedLanguage', lang);
+    // Guardar timestamp para forzar eventos storage en otras pestañas aunque el valor sea igual
+    localStorage.setItem('selectedLanguageTimestamp', String(Date.now()));
     document.documentElement.lang = lang;
     updateTranslations(lang);
+
+    // Emitir evento custom en la misma ventana para que otros módulos puedan reaccionar inmediatamente
+    try {
+        window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang } }));
+    } catch (err) {
+        console.warn('Could not dispatch languageChanged event', err);
+    }
 }
 
 function updateTranslations(lang) {
@@ -171,6 +269,42 @@ function updateTranslations(lang) {
         }
     });
 
+    // Actualizar title attributes (data-translate-title)
+    const titleElements = document.querySelectorAll('[data-translate-title]');
+    titleElements.forEach(element => {
+        const key = element.getAttribute('data-translate-title');
+        if (translations[lang] && translations[lang][key]) {
+            element.title = translations[lang][key];
+        }
+    });
+
+    // Actualizar aria-label (data-translate-aria)
+    const ariaElements = document.querySelectorAll('[data-translate-aria]');
+    ariaElements.forEach(element => {
+        const key = element.getAttribute('data-translate-aria');
+        if (translations[lang] && translations[lang][key]) {
+            element.setAttribute('aria-label', translations[lang][key]);
+        }
+    });
+
+    // Actualizar innerHTML si se necesita (data-translate-html)
+    const htmlElements = document.querySelectorAll('[data-translate-html]');
+    htmlElements.forEach(element => {
+        const key = element.getAttribute('data-translate-html');
+        if (translations[lang] && translations[lang][key]) {
+            element.innerHTML = translations[lang][key];
+        }
+    });
+
+    // Actualizar value si se necesita (data-translate-value)
+    const valueElements = document.querySelectorAll('[data-translate-value]');
+    valueElements.forEach(element => {
+        const key = element.getAttribute('data-translate-value');
+        if (translations[lang] && translations[lang][key]) {
+            element.value = translations[lang][key];
+        }
+    });
+
     // Actualizar options de tipos de Pokémon
     updatePokemonTypes(lang);
 }
@@ -189,8 +323,100 @@ function updatePokemonTypes(lang) {
     }
 }
 
+// Sincronizar traducción entre pestañas/ventanas
+window.addEventListener('storage', function(e) {
+    if (!e) return;
+    // Si cambió el idioma o la marca temporal, leer el idioma actual desde localStorage
+    if (e.key === 'selectedLanguage' || e.key === 'selectedLanguageTimestamp') {
+        const newLang = localStorage.getItem('selectedLanguage') || 'es';
+        try {
+            updateTranslations(newLang);
+            console.log('Language synchronized via storage event:', newLang);
+        } catch (err) {
+            console.error('Error applying synced language:', err);
+        }
+    }
+});
+
+// También escuchar el evento custom para posibles módulos dentro de la misma ventana
+window.addEventListener('languageChanged', function(e) {
+    const newLang = (e && e.detail && e.detail.lang) ? e.detail.lang : (localStorage.getItem('selectedLanguage') || 'es');
+    try {
+        updateTranslations(newLang);
+        console.log('Language changed via custom event:', newLang);
+    } catch (err) {
+        console.error('Error applying language from custom event:', err);
+    }
+});
+
 // Hacer las funciones disponibles globalmente
 window.changeLanguage = changeLanguage;
 window.updateTranslations = updateTranslations;
+
+/* ============================
+   Sincronización y alertas
+   ============================ */
+
+// Helper para obtener traducción de clave
+function getTranslationForKey(lang, key) {
+    if (!key) return null;
+    return translations[lang] && translations[lang][key] ? translations[lang][key] : null;
+}
+
+// Mostrar alerta traducida.
+// Acepta una clave (por ejemplo 'alert.login.success') o un string bruto.
+// Si se pasa una string que comienza con "t:" se interpreta como clave (ej. "t:alert.login.success").
+function translatedAlert(keyOrText) {
+    const currentLang = localStorage.getItem('selectedLanguage') || document.documentElement.lang || 'es';
+    let text = keyOrText;
+
+    if (typeof keyOrText === 'string' && keyOrText.startsWith('t:')) {
+        const key = keyOrText.slice(2);
+        const translated = getTranslationForKey(currentLang, key);
+        text = translated || key; // fallback a la key si no existe traducción
+    } else if (typeof keyOrText === 'string' && translations[currentLang] && translations[currentLang][keyOrText]) {
+        // si el usuario pasó directamente la key sin prefijo
+        text = translations[currentLang][keyOrText];
+    }
+
+    // Usar el alert original almacenado
+    if (typeof window._originalAlert === 'function') {
+        window._originalAlert(text);
+    } else {
+        // almacenar original si no existe
+        window.alert(text);
+    }
+}
+
+// Guardar el alert original una sola vez y sobrescribir window.alert para soportar prefijo "t:"
+if (!window._originalAlert) {
+    window._originalAlert = window.alert.bind(window);
+    window.alert = function(message) {
+        // si message es "t:clave" lo traducimos
+        if (typeof message === 'string' && message.startsWith('t:')) {
+            translatedAlert(message);
+            return;
+        }
+        // si message coincide exactamente con una clave de traducción en el idioma actual, usarla
+        const currentLang = localStorage.getItem('selectedLanguage') || document.documentElement.lang || 'es';
+        if (typeof message === 'string' && translations[currentLang] && translations[currentLang][message]) {
+            window._originalAlert(translations[currentLang][message]);
+            return;
+        }
+        // sino comportamiento normal
+        window._originalAlert(message);
+    };
+}
+
+// Exponer helper globalmente (por si se prefiere usar sin sobrescribir alert)
+window.translatedAlert = translatedAlert;
+
+// ----------------------
+// Exponer helpers para otros scripts (p. ej. perfil.js)
+window.getTranslationForKey = getTranslationForKey;
+window.t = function(key) {
+    const lang = localStorage.getItem('selectedLanguage') || document.documentElement.lang || 'es';
+    return getTranslationForKey(lang, key) || key;
+};
 
 console.log('Translator script loaded successfully');

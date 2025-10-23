@@ -1,0 +1,205 @@
+/* --- Palette y estilos sincronizados con BuscadorTCG.css --- */
+
+/* Fondo y tipografía: usar el mismo fondo que la página de búsqueda */
+body {
+  background-image: url('../Imagenes/FondoOscuroCartas.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #2e2e2e;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+/* Navbar: copia 1:1 del estilo del buscador */
+.navbar {
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  z-index: 999;
+  background-color: rgba(29, 29, 61, 0.9) !important;
+}
+
+.navbar-brand {
+  font-weight: 700 !important;
+  color: #bb5d00 !important;
+}
+
+.navbar-nav .nav-link {
+  font-weight: 600;
+  color: white !important;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #bb5d00 !important;
+}
+
+/* --- Contenedor principal: alineado a BuscadorTCG.css --- */
+.page-wrapper {
+  width: 95%;
+  max-width: 960px;
+  background-color: rgba(29, 29, 61, 0.9) !important;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 15px rgb(0 0 0 / 0.15);
+  display: flex;
+  flex-direction: column;
+  min-height: 80vh;
+  margin: 20px auto;
+  align-self: center;
+  color: #ffffff;
+}
+
+/* Cabecera y título */
+.page-wrapper header { text-align: center; margin-bottom: 20px; }
+.page-wrapper h1 {
+  font-weight: 700;
+  font-family: 'Pokemon Solid', sans-serif;
+  -webkit-text-stroke: 1px rgb(60 90 166);
+  color: #FFCB05;
+}
+
+/* Contenedor del juego - aspecto ligeramente más contrastado pero con los mismos acentos */
+#game-area {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.08));
+  border: 1px solid rgba(187,93,0,0.06);
+  border-radius: 10px;
+  padding: 18px;
+}
+
+/* Imagen de la carta: centrado y marco acorde */
+#card-image-wrapper {
+  width: 320px;
+  height: 220px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin: 0 auto 12px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(0,0,0,0.06));
+  border-radius: 10px;
+  padding: 10px;
+  border: 2px solid rgba(187,93,0,0.05);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+#card-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: 6px;
+  background: linear-gradient(180deg,#fff,#f6f6f6);
+  padding: 6px;
+}
+
+/* Pregunta: tarjeta destacada */
+#question-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.16));
+  border: 1px solid rgba(255,255,255,0.03);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+}
+#question-text {
+  font-weight: 800;
+  color: #fff;
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+/* Respuestas: grid adaptable */
+#answers {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+@media (max-width: 640px) {
+  #answers { grid-template-columns: 1fr; }
+}
+
+/* Botones: usar exactamente los colores y comportamiento del buscador */
+#answers .btn {
+  text-align: left;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-weight: 800;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+}
+
+/* Botón principal y botón genérico: colores del sitio */
+button, .btn {
+  background-color: #bb5d00;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 5px !important;
+  transition: background-color 0.3s ease;
+  min-width: 100px;
+}
+button:hover, button:focus, .btn:hover, .btn:focus {
+  background-color: #2e2e2e;
+  outline: none;
+}
+
+/* Badge primary color acordado */
+.badge.bg-primary {
+  background: #6d3704 !important;
+  border-radius: 8px;
+  color: #fff;
+}
+
+/* Progress bar: mismo gradiente */
+.progress { height: 10px; border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.04); }
+#question-progress { background: linear-gradient(90deg,#6d3704,#ffa807); width: 0%; transition: width 350ms linear; }
+
+/* Temporizador */
+#timer { color: rgba(255,255,255,0.85); font-weight: 700; margin-left: 8px; }
+
+/* Feedback colores iguales al sitio (verde/rojo más ricos) */
+.btn.correct {
+  background: linear-gradient(180deg, #1f8a56, #198754) !important;
+  border-color: #176c45 !important;
+  color: #fff !important;
+  box-shadow: 0 8px 18px rgba(25,135,84,0.24);
+}
+.btn.wrong {
+  background: linear-gradient(180deg, #e15757, #dc3545) !important;
+  border-color: #b02a2a !important;
+  color: #fff !important;
+  box-shadow: 0 8px 18px rgba(220,53,69,0.18);
+}
+
+/* Controles inferiores */
+#next-btn, #restart-btn { min-width: 120px; font-weight: 800; border-radius: 8px; }
+#next-btn[disabled] { opacity: 0.6; cursor: not-allowed; }
+
+/* Resultado final */
+#result-area {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.08));
+  border-radius: 10px;
+  padding: 18px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.28);
+}
+
+/* Texto secundario */
+.page-wrapper .text-muted.small {
+  color: rgb(255, 255, 255) !important;
+}
+
+/* Responsivo */
+@media (max-width: 480px) {
+  .page-wrapper { padding: 14px; }
+  #card-image-wrapper { width: 220px; height: 150px; }
+  #question-text { font-size: 1rem; }
+  #answers .btn { padding: 10px 12px; font-size: 0.95rem; }
+}

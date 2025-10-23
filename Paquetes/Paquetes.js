@@ -203,14 +203,15 @@ function actualizarInterfazPaquetes() {
     container.appendChild(paqueteElement);
   });
   
-  // Añadir botón para crear nuevo paquete
+  // Añadir botón para crear nuevo paquete (usando data-translate para la parte estática)
   const botonCrear = document.createElement('div');
-  botonCrear.className = 'contenedor-crear-paquete';
+  // Mantener la misma estructura y centrado que el bloque estático en el HTML
+  botonCrear.className = 'contenedor-crear-paquete d-flex justify-content-center align-items-center flex-column';
   botonCrear.innerHTML = `
-    <button type="button" class="btn-crear-paquete">
-      <i class="bi bi-plus-lg" style="font-size: 27px;padding: 0px 10px 0px 10px;color: #ffffff;background-color: #b95c00;border-radius: 8px; margin-top: 14px; margin-bottom: 14px;"></i>
+    <button type="button" class="btn-crear-paquete" aria-label="Crear paquete">
+      <i class="bi bi-plus-lg" style="font-size: 27px;padding: 0px 10px 0px 10px;background-color: #b95c00;border-radius: 8px; margin-top: 14px; margin-bottom: 14px; color: #ffffff;"></i>
     </button>
-    <h5 style="text-align: center;">Crear nuevo paquete</h5>
+    <h5 style="text-align: center;" data-translate="packs.create">Nuevo Paquete</h5>
   `;
   
   // Añadir event listener al nuevo botón
@@ -218,6 +219,10 @@ function actualizarInterfazPaquetes() {
   nuevoBoton.addEventListener('click', abrirModalCrearPaquete);
   
   container.appendChild(botonCrear);
+
+  // Aplicar traducciones a los elementos añadidos dinámicamente
+  const lang = localStorage.getItem('selectedLanguage') || document.documentElement.lang || 'es';
+  if (typeof updateTranslations === 'function') updateTranslations(lang);
 }
 
 // Función para crear el elemento HTML de un paquete
@@ -227,21 +232,21 @@ function crearElementoPaquete(paquete) {
   div.dataset.paqueteId = paquete.id; // permitir referencia al paquete
 
   let detallesExtra = [];
-  if (paquete.rareza) detallesExtra.push(`Rareza: ${paquete.rareza}`);
-  if (paquete.set) detallesExtra.push(`Set: ${paquete.set}`);
-  if (paquete.tipo) detallesExtra.push(`Tipo: ${paquete.tipo}`);
+  if (paquete.rareza) detallesExtra.push(`<span data-translate="paquete.rareza">Rareza:</span> ${paquete.rareza}`);
+  if (paquete.set) detallesExtra.push(`<span data-translate="paquete.set">Set:</span> ${paquete.set}`);
+  if (paquete.tipo) detallesExtra.push(`<span data-translate="paquete.tipo">Tipo:</span> ${paquete.tipo}`);
 
   div.innerHTML = `
     <div class="paquete-nombre">${paquete.nombre}</div>
-    <div class="paquete-info">${paquete.numeroCartas} cartas disponibles</div>
-    <div class="paquete-info">Creado: ${paquete.fechaCreacion}</div>
+    <div class="paquete-info"><span class="paquete-numero-cartas">${paquete.numeroCartas}</span> <span data-translate="paquete.cardsAvailable">cartas disponibles</span></div>
+    <div class="paquete-info"><span data-translate="paquete.created">Creado:</span> <span class="paquete-fecha">${paquete.fechaCreacion}</span></div>
     ${detallesExtra.length > 0 ? `<div class="paquete-detalles">${detallesExtra.join(' • ')}</div>` : ''}
     <br>
     <div class="paquete-botones">
-      <button class="btn-editar-paquete" title="Editar paquete">
+      <button class="btn-editar-paquete" data-translate-title="paquete.edit" title="Editar paquete">
         <i class="bi bi-pencil-square" style="font-size: 20px;padding: 0px 10px 0px 10px;color: #ffffff;background-color: #0300b9ff;border-radius: 8px; margin-top: 14px; margin-bottom: 14px;"></i>
       </button>
-      <button class="btn-eliminar-paquete" title="Eliminar paquete">
+      <button class="btn-eliminar-paquete" data-translate-title="paquete.delete" title="Eliminar paquete">
         <i class="bi bi-trash" style="font-size: 20px;padding: 0px 10px 0px 10px;color: #ffffff;background-color: #b90000ff;border-radius: 8px; margin-top: 14px; margin-bottom: 14px;"></i>
       </button>
     </div>
@@ -270,14 +275,20 @@ function crearElementoPaquete(paquete) {
     eliminarPaquete(Number(div.dataset.paqueteId));
   });
 
+  // Aplicar traducciones a los elementos creados (si el traductor ya está cargado)
+  const lang = localStorage.getItem('selectedLanguage') || document.documentElement.lang || 'es';
+  if (typeof updateTranslations === 'function') updateTranslations(lang);
+
   return div;
 }
 
-// Nueva función para editar un paquete
+// Nueva función para editar un paquete (actualizada para usar claves traducibles)
 function editarPaquete(paqueteId) {
   const paquete = paquetesCreados.find(p => p.id === paqueteId);
   if (!paquete) {
-    alert('Paquete no encontrado');
+    // usar alerta traducida si está disponible
+    if (typeof translatedAlert === 'function') translatedAlert('alert.pack.error');
+    else alert('Paquete no encontrado');
     return;
   }
 
@@ -288,15 +299,19 @@ function editarPaquete(paqueteId) {
   document.getElementById('setEspecifico').value = paquete.set || '';
   document.getElementById('tipoPokemon').value = paquete.tipo || '';
 
-  // Cambiar el título del modal
-  document.getElementById('modalCrearPaqueteLabel').textContent = 'Editar Paquete';
-  
-  // Cambiar el texto del botón
+  // Cambiar el título del modal a clave traducible
+  const modalTitle = document.getElementById('modalCrearPaqueteLabel');
+  modalTitle.setAttribute('data-translate', 'modal.create.editTitle');
+
+  // Cambiar el texto del botón a clave traducible y asignar handler
   const btnCrear = document.querySelector('#modalCrearPaquete .btn-warning');
-  btnCrear.textContent = 'Guardar Cambios';
+  btnCrear.setAttribute('data-translate', 'modal.create.saveChanges');
   btnCrear.onclick = () => guardarCambiosPaquete(paqueteId);
 
-  // Abrir el modal
+  // Aplicar traducciones y abrir el modal
+  const lang = localStorage.getItem('selectedLanguage') || document.documentElement.lang || 'es';
+  if (typeof updateTranslations === 'function') updateTranslations(lang);
+
   abrirModalCrearPaquete();
 }
 
@@ -361,15 +376,20 @@ function eliminarPaquete(paqueteId) {
   }
 }
 
-// Nueva función para restaurar el modal de crear a su estado original
+// Nueva función para restaurar el modal de crear a su estado original (usando claves)
 function restaurarModalCrear() {
-  document.getElementById('modalCrearPaqueteLabel').textContent = 'Crear Nuevo Paquete';
+  const modalTitle = document.getElementById('modalCrearPaqueteLabel');
+  modalTitle.setAttribute('data-translate', 'modal.create.title');
   const btnCrear = document.querySelector('#modalCrearPaquete .btn-warning');
-  btnCrear.textContent = 'Crear Paquete';
+  btnCrear.setAttribute('data-translate', 'modal.create.button');
   btnCrear.onclick = crearPaquete;
   
   // Limpiar formulario
   document.getElementById('formCrearPaquete').reset();
+
+  // Reaplicar traducciones
+  const lang = localStorage.getItem('selectedLanguage') || document.documentElement.lang || 'es';
+  if (typeof updateTranslations === 'function') updateTranslations(lang);
 }
 
 // Nueva función para configurar la navegación manual del carousel
@@ -589,14 +609,14 @@ function crearHTMLCarta(carta) {
             <span class="carta-detalle-label">Set:</span>
             <span class="carta-detalle-valor">${set}</span>
           </div>
-          <button type="button" class="btn btn-danger btn-sm" onclick="eliminarCartaDePaquete('${carta.id || carta.name}')" title="Eliminar carta del paquete">
-            <i class="bi bi-trash"></i>
-          </button>
         </div>
         ${precio ? `<div class="carta-detalle">
           <span class="carta-detalle-label">Precio:</span>
           <span class="carta-detalle-valor">${precio}</span>
         </div>` : ''}
+        <button type="button" class="btn btn-danger btn-sm" onclick="eliminarCartaDePaquete('${carta.id || carta.name}')" title="Eliminar carta del paquete">
+          <i class="bi bi-trash"></i>
+        </button>
       </div>
     </div>
   `;
