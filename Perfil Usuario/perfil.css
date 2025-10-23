@@ -187,3 +187,122 @@ body{
         font-size: 1rem;
     }
 }
+
+/* Estilos para lista de paquetes del usuario en el panel derecho */
+.user-package-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  padding: 12px;
+}
+
+/* Reutilizar diseño de paquetes del buscador para el panel de perfil */
+.user-package-grid {
+  padding: 12px;
+}
+
+/* Reglas para las tarjetas que replican package-bootstrap-card */
+.user-package-grid .package-bootstrap-card {
+  border: 3px solid;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #fff 0%, #fbfbfd 100%);
+  overflow: hidden;
+}
+
+/* Hover / clickable */
+.user-package-grid .package-bootstrap-card.clickable:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Disabled state */
+.user-package-grid .package-bootstrap-card.disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Imagen contenedor */
+.user-package-grid .card-img-container {
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.06);
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+  padding: 8px;
+}
+
+/* Imagen centrada similar al modal */
+.user-package-grid .package-card-image-center {
+  width: auto;
+  height: 140px;
+  max-width: 140px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease;
+}
+
+.user-package-grid .package-bootstrap-card.clickable:hover .package-card-image-center {
+  transform: scale(1.05);
+}
+
+/* Título / nombre */
+.user-package-grid .package-card-name-center {
+  font-weight: 700;
+  color: #1d1d3d;
+  font-size: 1.05rem;
+  margin-bottom: 8px;
+  word-break: break-word;
+  line-height: 1.15;
+}
+
+/* Texto adicional */
+.user-package-grid .card-text {
+  color: #6c757d;
+  font-size: 0.88rem;
+}
+
+/* Badge */
+.user-package-grid .badge {
+  font-size: 0.75rem;
+  padding: 6px 10px;
+}
+
+/* Colores por tipo (copiar los mismos usados en BuscadorTCG.css) */
+.user-package-grid .type-fire { border-color: #ff6b6b; }
+.user-package-grid .type-water { border-color: #4ecdc4; }
+.user-package-grid .type-grass { border-color: #51cf66; }
+.user-package-grid .type-lightning { border-color: #ffd43b; }
+.user-package-grid .type-psychic { border-color: #da77f2; }
+.user-package-grid .type-fighting { border-color: #ff8787; }
+.user-package-grid .type-darkness { border-color: #495057; }
+.user-package-grid .type-metal { border-color: #adb5bd; }
+.user-package-grid .type-fairy { border-color: #fcc2d7; }
+.user-package-grid .type-dragon { border-color: #845ef7; }
+.user-package-grid .type-normal { border-color: #868e96; }
+.user-package-grid .type-ice { border-color: #74c0fc; }
+.user-package-grid .type-flying { border-color: #91a7ff; }
+.user-package-grid .type-poison { border-color: #9775fa; }
+.user-package-grid .type-ground { border-color: #ffa94d; }
+.user-package-grid .type-rock { border-color: #8ce99a; }
+.user-package-grid .type-bug { border-color: #69db7c; }
+.user-package-grid .type-ghost { border-color: #6741d9; }
+.user-package-grid .no-type { border-color: #000000; }
+
+/* Responsive tweaks for the grid */
+@media (max-width: 768px) {
+  .user-package-grid .card-img-container { height: 130px; }
+  .user-package-grid .package-card-image-center { height: 110px; max-width: 100px; }
+  .user-package-grid .package-card-name-center { font-size: 1rem; }
+}
