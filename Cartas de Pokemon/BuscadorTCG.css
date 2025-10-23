@@ -413,69 +413,226 @@ button:focus {
   transform-origin: center center;
 }
 
-/* Media queries para responsividad */
+/* Estilos para el modal de selección de paquetes */
+#package-select-modal .modal-content {
+  background-color: white !important;
+  border: 3px solid #bb5d00;
+  border-radius: 15px;
+  max-width: 800px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+#package-select-modal .modal-header {
+  color: #FFCB05;
+  padding: 15px 20px;
+  border-radius: 12px 12px 0 0;
+  border-bottom: 3px solid #bb5d00;
+  margin: 0;
+}
+
+#package-select-modal .modal-header h3 {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.3rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+#package-select-modal .btn-close {
+  background: none;
+  border: none;
+  color: #FFCB05;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+#package-select-modal .btn-close:hover {
+  background-color: rgba(255, 203, 5, 0.2);
+}
+
+.package-list {
+  padding: 20px;
+  background-color: white;
+  min-height: 300px;
+}
+
+/* Estilos para las tarjetas de Bootstrap */
+.package-bootstrap-card {
+  border: 3px solid;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.package-bootstrap-card.clickable:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.package-bootstrap-card.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.package-bootstrap-card.disabled:hover {
+  transform: none;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Colores de borde según el tipo */
+.package-bootstrap-card.type-fire { border-color: #ff6b6b; }
+.package-bootstrap-card.type-water { border-color: #4ecdc4; }
+.package-bootstrap-card.type-grass { border-color: #51cf66; }
+.package-bootstrap-card.type-lightning { border-color: #ffd43b; }
+.package-bootstrap-card.type-psychic { border-color: #da77f2; }
+.package-bootstrap-card.type-fighting { border-color: #ff8787; }
+.package-bootstrap-card.type-darkness { border-color: #495057; }
+.package-bootstrap-card.type-metal { border-color: #adb5bd; }
+.package-bootstrap-card.type-fairy { border-color: #fcc2d7; }
+.package-bootstrap-card.type-dragon { border-color: #845ef7; }
+.package-bootstrap-card.type-normal { border-color: #868e96; }
+.package-bootstrap-card.type-ice { border-color: #74c0fc; }
+.package-bootstrap-card.type-flying { border-color: #91a7ff; }
+.package-bootstrap-card.type-poison { border-color: #9775fa; }
+.package-bootstrap-card.type-ground { border-color: #ffa94d; }
+.package-bootstrap-card.type-rock { border-color: #8ce99a; }
+.package-bootstrap-card.type-bug { border-color: #69db7c; }
+.package-bootstrap-card.type-ghost { border-color: #6741d9; }
+.package-bootstrap-card.no-type { border-color: #000000; }
+
+.card-img-container {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+}
+
+.package-card-image-center {
+  width: auto;
+  height: 180px;
+  max-width: 120px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.package-bootstrap-card.clickable:hover .package-card-image-center {
+  transform: scale(1.05);
+}
+
+.package-card-name-center {
+  font-weight: 700;
+  color: #1d1d3d;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  word-break: break-word;
+  line-height: 1.2;
+}
+
+.package-bootstrap-card .card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 15px;
+}
+
+.package-bootstrap-card .card-text {
+  color: #6c757d;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.package-bootstrap-card .badge {
+  font-size: 0.75rem;
+  padding: 6px 10px;
+}
+
+#package-select-modal .modal-footer {
+  background-color: #f8f9fa;
+  border-top: 2px solid #bb5d00;
+  padding: 12px 20px;
+  border-radius: 0 0 12px 12px;
+  color: #6c757d;
+  font-size: 0.85rem;
+  text-align: center;
+  margin: 0;
+}
+
+/* Responsive para el modal de paquetes */
 @media (max-width: 768px) {
-  .page-wrapper {
-    width: 98%;
+  .package-list {
     padding: 15px;
-    margin: 10px auto;
   }
   
-  #cards-container {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
+  .card-img-container {
+    height: 160px;
   }
   
-  form {
-    flex-direction: column;
-    align-items: center;
+  .package-card-image-center {
+    height: 140px;
+    max-width: 100px;
   }
   
-  input[type="text"] {
-    min-width: 250px;
-    max-width: 100%;
+  .package-card-name-center {
+    font-size: 1rem;
   }
   
-  button {
-    min-width: 120px;
+  #package-select-modal .modal-content {
+    margin: 20px;
+    max-height: 90vh;
   }
   
-  #filter-controls > div {
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  #filter-controls > div > div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
+  .row.row-cols-1.row-cols-md-2 {
+    --bs-gutter-x: 1rem;
+    --bs-gutter-y: 1rem;
   }
 }
 
 @media (max-width: 480px) {
-  .page-wrapper {
+  .package-list {
     padding: 10px;
-    margin: 5px auto;
   }
   
-  #cards-container {
-    grid-template-columns: 1fr;
-    gap: 12px;
+  .card-img-container {
+    height: 140px;
   }
   
-  .card {
-    max-width: 100%;
+  .package-card-image-center {
+    height: 120px;
+    max-width: 80px;
   }
   
-  input[type="text"] {
-    min-width: 200px;
+  .package-card-name-center {
+    font-size: 0.95rem;
   }
   
-  .modal-content {
-    margin: 10px;
-    padding: 15px;
+  .package-bootstrap-card .card-body {
+    padding: 12px;
+  }
+  
+  .package-bootstrap-card .card-text {
+    font-size: 0.85rem;
   }
 }
 

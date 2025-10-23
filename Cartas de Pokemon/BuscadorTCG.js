@@ -754,8 +754,15 @@ async function searchCards(query) {
 function addToPack(event, cardId) {
   event.stopPropagation(); // Evitar que se abra el modal
 
-  // Mostrar modal de selección de paquete
-  showPackageSelectModal(cardId, event.target);
+  // Buscar carta en el cache
+  const card = allLoadedCards.find(c => c.id === cardId);
+  if (!card) {
+    showErrorModal("No se encontró la carta");
+    return;
+  }
+
+  // Mostrar modal de selección de paquete usando la función correcta
+  showPackageSelection(card);
 }
 
 // Mostrar modal con paquetes creados para seleccionar
@@ -967,3 +974,154 @@ function animateCardToBottom(imageElement) {
     }, 320);
   });
 }
+
+
+
+// Función para mostrar el modal de selección de paquetes
+function showPackageSelection(cardData) {
+  const modal = document.getElementById('package-select-modal');
+  const packageList = document.getElementById('package-list');
+  
+  // Obtener paquetes del localStorage
+  const packages = JSON.parse(localStorage.getItem('paquetesCreados') || '[]');
+  
+  // Limpiar la lista
+  packageList.innerHTML = '';
+  
+  if (packages.length === 0) {
+    packageList.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #6c757d;">
+        <i class="bi bi-folder-plus" style="font-size: 3rem; margin-bottom: 15px; display: block;"></i>
+        <h4>No hay paquetes creados</h4>
+        <p>Ve a la sección "Paquetes" para crear tu primer paquete.</p>
+      </div>
+    `;
+  } else {
+    // Crear estructura de Bootstrap row
+    const row = document.createElement('div');
+    row.className = 'row row-cols-1 row-cols-md-2 g-4';
+    
+    packages.forEach(pkg => {
+      const currentCards = pkg.cartas ? pkg.cartas.length : 0;
+      const isAtLimit = currentCards >= pkg.numeroCartas;
+      
+      // Determinar clase de tipo para el borde
+      let typeClass = 'no-type';
+      if (pkg.tipo) {
+        typeClass = `type-${pkg.tipo}`;
+      }
+      
+      // Obtener la primera carta si existe
+      let cardImageSrc = '../Imagenes/carta-placeholder.png';
+      let cardImageAlt = 'Paquete vacío';
+      
+      if (pkg.cartas && pkg.cartas.length > 0) {
+        const firstCard = pkg.cartas[0];
+        cardImageSrc = firstCard.images?.small || firstCard.image || '../Imagenes/carta-placeholder.png';
+        cardImageAlt = firstCard.name || 'Primera carta del paquete';
+      }
+      
+      // Crear columna de Bootstrap
+      const col = document.createElement('div');
+      col.className = 'col';
+      
+      // Crear tarjeta de Bootstrap
+      const card = document.createElement('div');
+      card.className = `card package-bootstrap-card ${typeClass} ${isAtLimit ? 'disabled' : ''}`;
+      
+      card.innerHTML = `
+        <div class="card-img-container">
+          <img src="${cardImageSrc}" class="card-img-top package-card-image-center" alt="${cardImageAlt}" 
+               onerror="this.src='../Imagenes/carta-placeholder.png'">
+        </div>
+        <div class="card-body text-center">
+          <h5 class="card-title package-card-name-center">${pkg.nombre}</h5>
+          <p class="card-text">
+            <small class="text-muted">${currentCards}/${pkg.numeroCartas} cartas</small><br>
+            ${pkg.tipo ? `<small class="text-muted">Tipo: ${capitalizeFirst(pkg.tipo)}</small><br>` : ''}
+            ${pkg.rareza ? `<small class="text-muted">Rareza: ${pkg.rareza}</small><br>` : ''}
+            ${pkg.set ? `<small class="text-muted">Set: ${pkg.set}</small><br>` : ''}
+            <span class="badge ${isAtLimit ? 'bg-danger' : 'bg-success'} mt-2">
+              ${isAtLimit ? 'Paquete lleno' : 'Disponible'}
+            </span>
+          </p>
+        </div>
+      `;
+      
+      if (!isAtLimit) {
+        card.onclick = () => {
+          addCardToPackage(cardData, pkg.id);
+          closeModal(modal);
+        };
+        card.style.cursor = 'pointer';
+        card.classList.add('clickable');
+      } else {
+        card.style.cursor = 'not-allowed';
+      }
+      
+      col.appendChild(card);
+      row.appendChild(col);
+    });
+    
+    packageList.appendChild(row);
+  }
+  
+  modal.style.display = 'flex';
+  modal.setAttribute('aria-hidden', 'false');
+  
+  // Focus management
+  const firstButton = modal.querySelector('.btn-close');
+  if (firstButton) firstButton.focus();
+}
+
+// Función auxiliar para capitalizar primera letra
+function capitalizeFirst(str) {
+  if (!str) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// Función para añadir carta a un paquete
+function addCardToPackage(cardData, packageId) {
+  const packages = JSON.parse(localStorage.getItem('paquetesCreados') || '[]');
+  const packageIndex = packages.findIndex(pkg => pkg.id === packageId);
+  
+  if (packageIndex === -1) {
+    showErrorModal('Paquete no encontrado');
+    return;
+  }
+  
+  const targetPackage = packages[packageIndex];
+  
+  // Verificar si el paquete está lleno
+  const currentCards = targetPackage.cartas ? targetPackage.cartas.length : 0;
+  if (currentCards >= targetPackage.numeroCartas) {
+    showErrorModal('Este paquete ya tiene el máximo de cartas permitidas');
+    return;
+  }
+  
+  // Inicializar array de cartas si no existe
+  if (!targetPackage.cartas) {
+    targetPackage.cartas = [];
+  }
+  
+  // Verificar si la carta ya está en el paquete
+  const cardExists = targetPackage.cartas.some(card => 
+    (card.id && card.id === cardData.id) || 
+    (card.name && card.name === cardData.name)
+  );
+  
+  if (cardExists) {
+    showErrorModal('Esta carta ya está en el paquete');
+    return;
+  }
+  
+  // Añadir la carta al paquete
+  targetPackage.cartas.push(cardData);
+  
+  // Guardar en localStorage
+  localStorage.setItem('paquetesCreados', JSON.stringify(packages));
+  
+  // Mostrar confirmación
+  showConfirmSaveModal();
+}
+

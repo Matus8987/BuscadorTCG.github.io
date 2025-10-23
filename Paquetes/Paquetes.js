@@ -584,10 +584,15 @@ function crearHTMLCarta(carta) {
           <span class="carta-detalle-label">Rareza:</span>
           <span class="carta-detalle-valor">${rareza}</span>
         </div>` : ''}
-        ${set ? `<div class="carta-detalle">
-          <span class="carta-detalle-label">Set:</span>
-          <span class="carta-detalle-valor">${set}</span>
-        </div>` : ''}
+        <div class="carta-detalle carta-detalle-set">
+          <div class="carta-set-info">
+            <span class="carta-detalle-label">Set:</span>
+            <span class="carta-detalle-valor">${set}</span>
+          </div>
+          <button type="button" class="btn btn-danger btn-sm" onclick="eliminarCartaDePaquete('${carta.id || carta.name}')" title="Eliminar carta del paquete">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
         ${precio ? `<div class="carta-detalle">
           <span class="carta-detalle-label">Precio:</span>
           <span class="carta-detalle-valor">${precio}</span>
@@ -596,60 +601,49 @@ function crearHTMLCarta(carta) {
     </div>
   `;
 }
-function crearHTMLCarta(carta) {
-  // Manejar diferentes formatos de carta
-  let nombre = 'Carta sin nombre';
-  let imagen = '../Imagenes/carta-placeholder.png';
-  let tipo = '';
-  let rareza = '';
-  let set = '';
-  let precio = '';
-  let hp = '';
 
-  if (typeof carta === 'string') {
-    nombre = carta;
-  } else if (carta && typeof carta === 'object') {
-    nombre = carta.name || carta.title || carta.nombre || 'Carta sin nombre';
-    imagen = carta.images?.small || carta.image || carta.imagen || '../Imagenes/carta-placeholder.png';
-    tipo = carta.types ? carta.types.join(', ') : (carta.tipo || '');
-    rareza = carta.rarity || carta.rareza || '';
-    set = carta.set?.name || carta.set || '';
-    precio = carta.cardmarket?.prices?.averageSellPrice ? 
-             `$${carta.cardmarket.prices.averageSellPrice}` : 
-             (carta.precio || '');
-    hp = carta.hp || '';
+// Nueva función para eliminar carta de un paquete
+function eliminarCartaDePaquete(cartaId) {
+  // Obtener el paquete actualmente mostrado en el modal
+  const modalElement = document.getElementById('modalDetallesPaquete');
+  const tituloEl = modalElement.querySelector('#modalDetallesPaqueteLabel');
+  const tituloTexto = tituloEl.textContent;
+  
+  // Extraer el nombre del paquete del título
+  const nombrePaquete = tituloTexto.replace('Cartas de: ', '');
+  
+  // Buscar el paquete en el array
+  const paquete = paquetesCreados.find(p => p.nombre === nombrePaquete);
+  if (!paquete) {
+    alert('No se pudo encontrar el paquete');
+    return;
   }
-
-  return `
-    <div class="carta-contenido">
-      <img src="${imagen}" alt="${nombre}" class="carta-imagen" 
-           onerror="this.src='../Imagenes/carta-placeholder.png'">
-      <div class="carta-info">
-        <h3 class="carta-nombre">${nombre}</h3>
-        ${hp ? `<div class="carta-detalle">
-          <span class="carta-detalle-label">HP:</span>
-          <span class="carta-detalle-valor">${hp}</span>
-        </div>` : ''}
-        ${tipo ? `<div class="carta-detalle">
-          <span class="carta-detalle-label">Tipo:</span>
-          <span class="carta-detalle-valor">${tipo}</span>
-        </div>` : ''}
-        ${rareza ? `<div class="carta-detalle">
-          <span class="carta-detalle-label">Rareza:</span>
-          <span class="carta-detalle-valor">${rareza}</span>
-        </div>` : ''}
-        ${set ? `<div class="carta-detalle">
-          <span class="carta-detalle-label">Set:</span>
-          <span class="carta-detalle-valor">${set}</span>
-        </div>` : ''}
-        ${precio ? `<div class="carta-detalle">
-          <span class="carta-detalle-label">Precio:</span>
-          <span class="carta-detalle-valor">${precio}</span>
-        </div>` : ''}
-      </div>
-    </div>
-  `;
+  
+  // Confirmar eliminación
+  if (!confirm('¿Estás seguro de que quieres eliminar esta carta del paquete?')) {
+    return;
+  }
+  
+  // Eliminar la carta del paquete
+  if (paquete.cartas) {
+    paquete.cartas = paquete.cartas.filter(carta => {
+      const id = carta.id || carta.name;
+      return id !== cartaId;
+    });
+  }
+  
+  // Guardar cambios en localStorage
+  localStorage.setItem('paquetesCreados', JSON.stringify(paquetesCreados));
+  
+  // Actualizar la interfaz de paquetes
+  actualizarInterfazPaquetes();
+  
+  // Reabrir el modal con los datos actualizados
+  setTimeout(() => {
+    abrirModalDetallesPaquete(paquete.id);
+  }, 100);
 }
+
 // Verificar que el traductor esté disponible antes de usarlo
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof changeLanguage === 'function') {
