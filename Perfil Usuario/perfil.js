@@ -102,76 +102,35 @@ function updatePackageCountAndList() {
     return;
   }
 
-  // Construir grid con los paquetes, usando la misma estructura que el modal de selección
-  const grid = document.createElement('div');
-  grid.className = 'row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 user-package-grid';
+  // Construir grid con los paquetes (mostrar sólo aquellos con cartas; mostrar la primera carta)
+  const listContainer = document.createElement('div');
+  listContainer.className = 'user-package-grid';
 
-  paquetesConCartas.forEach(pkg => {
-    const currentCards = Array.isArray(pkg.cartas) ? pkg.cartas.length : 0;
-    const isAtLimit = pkg.numeroCartas && currentCards >= pkg.numeroCartas;
+  paquetesConCartas.forEach(paquete => {
+    const firstCard = paquete.cartas[0];
+    const imgSrc = (firstCard && (firstCard.images?.small || firstCard.image || firstCard.imagen)) || '../Imagenes/carta-placeholder.png';
+    const nombre = paquete.nombre || 'Paquete sin nombre';
 
-    // Tipo -> clase
-    const typeClass = pkg.tipo ? `type-${pkg.tipo}` : 'no-type';
-
-    // Primera carta como imagen
-    let cardImageSrc = '../Imagenes/carta-placeholder.png';
-    let cardImageAlt = 'Primera carta del paquete';
-    if (pkg.cartas && pkg.cartas.length > 0) {
-      const first = pkg.cartas[0];
-      cardImageSrc = first.image || first.images?.small || first.images?.large || first.imagen || cardImageSrc;
-      cardImageAlt = first.name || first.nombre || cardImageAlt;
-    }
-
-    // Columna + tarjeta (mismo markup base que package-bootstrap-card)
-    const col = document.createElement('div');
-    col.className = 'col';
-
-    const card = document.createElement('div');
-    card.className = `card package-bootstrap-card ${typeClass} ${isAtLimit ? 'disabled' : 'clickable'}`;
-    card.dataset.pkgId = pkg.id;
-
-    card.innerHTML = `
-      <div class="card-img-container">
-        <img src="${cardImageSrc}" class="card-img-top package-card-image-center" alt="${escapeHtml(cardImageAlt)}" onerror="this.src='../Imagenes/carta-placeholder.png'">
-      </div>
-      <div class="card-body text-center">
-        <h5 class="card-title package-card-name-center">${escapeHtml(pkg.nombre || 'Paquete')}</h5>
-        <p class="card-text">
-          <small class="text-muted">${currentCards}/${pkg.numeroCartas || '∞'} cartas</small><br>
-          ${pkg.tipo ? `<small class="text-muted">Tipo: ${escapeHtml(capitalizeFirst(pkg.tipo))}</small><br>` : ''}
-          ${pkg.rareza ? `<small class="text-muted">Rareza: ${escapeHtml(pkg.rareza)}</small><br>` : ''}
-          ${pkg.set ? `<small class="text-muted">Set: ${escapeHtml(pkg.set)}</small><br>` : ''}
-          <span class="badge ${isAtLimit ? 'bg-danger' : 'bg-success'} mt-2">
-            ${isAtLimit ? 'Paquete lleno' : 'Disponible'}
-          </span>
-        </p>
+    const cardDiv = document.createElement('div');
+    cardDiv.className = 'user-package-card';
+    cardDiv.innerHTML = `
+      <div class="user-package-card-inner">
+        <div class="user-package-img-wrap">
+          <img src="${imgSrc}" alt="Primera carta de ${nombre}" onerror="this.src='../Imagenes/carta-placeholder.png'">
+        </div>
+        <div class="user-package-meta">
+          <div class="user-package-name">${escapeHtml(nombre)}</div>
+          <div class="user-package-info">${(paquete.cartas ? paquete.cartas.length : 0)} cartas</div>
+        </div>
       </div>
     `;
-
-    // Click abre modal de detalles del paquete si existe la función (misma UX que en Paquetes.js)
-    if (!isAtLimit) {
-      card.style.cursor = 'pointer';
-      card.addEventListener('click', (e) => {
-        e.stopPropagation();
-        // Preferir la función global definida en Paquetes.js
-        if (typeof window.abrirModalDetallesPaquete === 'function') {
-          window.abrirModalDetallesPaquete(pkg.id);
-        } else {
-          // Fallback: emitir evento para que otra parte pueda escucharlo
-          window.dispatchEvent(new CustomEvent('profile-open-package', { detail: { packageId: pkg.id } }));
-        }
-      });
-    } else {
-      card.style.cursor = 'not-allowed';
-    }
-
-    col.appendChild(card);
-    grid.appendChild(col);
+    // Opcional: al hacer click se puede abrir detalles si se desea
+    listContainer.appendChild(cardDiv);
   });
 
-  // Reemplazar contenido del contenedor noCartas por la grid
-  noCartasDiv.innerHTML = '';
-  noCartasDiv.appendChild(grid);
+  // Reemplazar contenido del contenedor noCartas por la lista
+  noCartasDiv.innerHTML = ''; // limpiar
+  noCartasDiv.appendChild(listContainer);
 
   // Reaplicar traducciones si el traductor ya está cargado
   const lang = localStorage.getItem('selectedLanguage') || document.documentElement.lang || 'es';
