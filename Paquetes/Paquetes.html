@@ -35,7 +35,8 @@
       <div class="navbar-nav ms-auto d-flex flex-row align-items-center">
         <!-- Dropdown de idiomas -->
         <div class="nav-item dropdown me-3">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: white;">
+          <!-- Added id for reliable selection and fallback handling -->
+          <a id="languageDropdownToggle" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: white;">
             <i class="bi bi-translate"></i>
           </a>
           <ul class="dropdown-menu">
@@ -213,6 +214,56 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('Error loading translator:', error);
     });
 });
+</script>
+
+<!-- Fallback ligero para el dropdown de idiomas -->
+<script>
+(function() {
+  function qs(sel, ctx) { return (ctx || document).querySelector(sel); }
+
+  document.addEventListener('click', function(e) {
+    const toggle = qs('#languageDropdownToggle');
+    if (!toggle) return;
+
+    const menu = toggle.nextElementSibling && toggle.nextElementSibling.classList.contains('dropdown-menu')
+      ? toggle.nextElementSibling
+      : null;
+
+    // Click sobre el toggle: alternar (si Bootstrap no lo gestiona)
+    if (e.target.closest && e.target.closest('#languageDropdownToggle')) {
+      // Si Bootstrap tiene su propia instancia, no interferir
+      const bsInstance = toggle.__dropdownInstance || null;
+      if (bsInstance) return;
+      const isShown = menu && menu.classList.contains('show');
+      if (menu) {
+        menu.classList.toggle('show', !isShown);
+        toggle.setAttribute('aria-expanded', String(!isShown));
+      }
+      e.preventDefault();
+      return;
+    }
+
+    // Click fuera: cerrar menú si está abierto
+    if (menu && menu.classList.contains('show') && !e.target.closest('.dropdown')) {
+      menu.classList.remove('show');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // Cerrar con Escape
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      const toggle = qs('#languageDropdownToggle');
+      const menu = toggle && toggle.nextElementSibling && toggle.nextElementSibling.classList.contains('dropdown-menu')
+        ? toggle.nextElementSibling
+        : null;
+      if (menu && menu.classList.contains('show')) {
+        menu.classList.remove('show');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    }
+  });
+})();
 </script>
 </body>
 </html>

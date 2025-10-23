@@ -33,7 +33,7 @@
         <div class="navbar-nav ms-auto d-flex flex-row align-items-center">
           <!-- Dropdown de idiomas -->
           <div class="nav-item dropdown me-3">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: white;">
+            <a id="languageDropdownToggle" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: white;">
               <i class="bi bi-translate"></i>
             </a>
             <ul class="dropdown-menu">
@@ -209,6 +209,60 @@
           console.error('Error loading translator:', error);
       });
   });
+
+  // --- Fallback ligero para el dropdown de idiomas ---
+  // Añade soporte para abrir/cerrar el menú si Bootstrap no inicializa correctamente el componente.
+  (function() {
+    function qs(sel, ctx) { return (ctx || document).querySelector(sel); }
+    function qsa(sel, ctx) { return Array.from((ctx || document).querySelectorAll(sel)); }
+
+    document.addEventListener('click', function(e) {
+      const toggle = qs('#languageDropdownToggle');
+      if (!toggle) return;
+
+      const menu = toggle.nextElementSibling && toggle.nextElementSibling.classList.contains('dropdown-menu')
+        ? toggle.nextElementSibling
+        : null;
+
+      // Si se hizo click sobre el toggle, alternar el menú
+      if (e.target.closest && e.target.closest('#languageDropdownToggle')) {
+        // Preferir el comportamiento nativo de Bootstrap si está presente (no romper)
+        const bsDropdown = toggle.__dropdownInstance || null;
+        if (bsDropdown) {
+          // Si Bootstrap está activo, dejar que gestione el toggle
+          return;
+        }
+        // fallback: toggle visual
+        const isShown = menu && menu.classList.contains('show');
+        if (menu) {
+          menu.classList.toggle('show', !isShown);
+          toggle.setAttribute('aria-expanded', String(!isShown));
+        }
+        e.preventDefault();
+        return;
+      }
+
+      // Si se hizo click fuera del menú y del toggle, cerrar el menú
+      if (menu && menu.classList.contains('show') && !e.target.closest('.dropdown')) {
+        menu.classList.remove('show');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Opcional: cerrar el menú con Escape
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        const toggle = qs('#languageDropdownToggle');
+        const menu = toggle && toggle.nextElementSibling && toggle.nextElementSibling.classList.contains('dropdown-menu')
+          ? toggle.nextElementSibling
+          : null;
+        if (menu && menu.classList.contains('show')) {
+          menu.classList.remove('show');
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+      }
+    });
+  })();
   </script>
 </body>
 </html>
