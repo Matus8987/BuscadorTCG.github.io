@@ -666,19 +666,55 @@ function eliminarCartaDePaquete(cartaId) {
 
 // Verificar que el traductor esté disponible antes de usarlo
 document.addEventListener('DOMContentLoaded', function() {
-    if (typeof changeLanguage === 'function') {
-        console.log('Translator loaded successfully');
-        const savedLanguage = localStorage.getItem('selectedLanguage') || 'es';
-        updateTranslations(savedLanguage);
-    } else {
-        console.error('Translator not loaded');
-        // Recargar el script si no está disponible
-        const script = document.createElement('script');
-        script.src = '../Traduccion/translator.js';
-        script.onload = function() {
-            const savedLanguage = localStorage.getItem('selectedLanguage') || 'es';
-            updateTranslations(savedLanguage);
+    const savedLanguage = localStorage.getItem('selectedLanguage') || 'es';
+
+    function ensureTranslatorReady(callback) {
+        // Si ya está listo, ejecutar inmediatamente
+        if (window.__translatorReady || typeof updateTranslations === 'function') {
+            callback();
+            return;
+        }
+
+        // Si ya se está intentando cargar el script, esperar al evento
+        const onReady = () => {
+            window.removeEventListener('translatorReady', onReady);
+            callback();
         };
-        document.head.appendChild(script);
+        window.addEventListener('translatorReady', onReady);
+
+        // Si no se ha iniciado la carga del script, inyectarlo una sola vez
+        if (!window.__translatorLoadAttempted) {
+            window.__translatorLoadAttempted = true;
+            const script = document.createElement('script');
+            script.src = '../Traduccion/translator.js';
+            script.defer = true;
+            script.onload = function() {
+                // Si el traductor ya no emite translatorReady (defensa), intentar aplicar traducciones
+                if (typeof updateTranslations === 'function') {
+                    try { updateTranslations(savedLanguage); } catch (e) { console.error(e); }
+                }
+            };
+            script.onerror = function() {
+                console.error('No se pudo cargar translator.js desde ../Traduccion/translator.js');
+            };
+            document.head.appendChild(script);
+        }
+
+        // Fallback: si no se dispara el evento en X ms, intentar llamar si existe la función
+        setTimeout(() => {
+            if (typeof updateTranslations === 'function') {
+                window.removeEventListener('translatorReady', onReady);
+                callback();
+            }
+        }, 2500);
     }
+
+    ensureTranslatorReady(() => {
+        try {
+            updateTranslations(savedLanguage);
+            console.log('Translator loaded and initialized in Paquetes');
+        } catch (err) {
+            console.error('Error applying translations after translator ready:', err);
+        }
+    });
 });

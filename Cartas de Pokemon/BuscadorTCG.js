@@ -1014,7 +1014,6 @@ function showPackageSelection(cardData) {
       // Obtener la primera carta si existe
       let cardImageSrc = '../Imagenes/carta-placeholder.png';
       let cardImageAlt = 'Paquete vacío';
-      
       if (pkg.cartas && pkg.cartas.length > 0) {
         const firstCard = pkg.cartas[0];
         cardImageSrc = firstCard.images?.small || firstCard.image || '../Imagenes/carta-placeholder.png';
