@@ -1011,13 +1011,25 @@ function showPackageSelection(cardData) {
         typeClass = `type-${pkg.tipo}`;
       }
       
-      // Obtener la primera carta si existe
-      let cardImageSrc = '../Imagenes/carta-placeholder.png';
-      let cardImageAlt = 'Paquete vacío';
+      // Preparar contenido de la cabecera de imagen:
+      // Si hay cartas, mostrar la primera imagen; si está vacío, mostrar icono <i class="bi bi-image"></i>
+      let cardImageHTML = '';
       if (pkg.cartas && pkg.cartas.length > 0) {
         const firstCard = pkg.cartas[0];
-        cardImageSrc = firstCard.images?.small || firstCard.image || '../Imagenes/carta-placeholder.png';
-        cardImageAlt = firstCard.name || 'Primera carta del paquete';
+        const cardImageSrc = firstCard.images?.small || firstCard.image || '../Imagenes/carta-placeholder.png';
+        const cardImageAlt = firstCard.name || 'Primera carta del paquete';
+        cardImageHTML = `
+          <img src="${cardImageSrc}" class="card-img-top package-card-image-center" alt="${cardImageAlt}" 
+               onerror="this.src='../Imagenes/carta-placeholder.png'">
+        `;
+      } else {
+        // Paquete vacío: mostrar el icono centrado (cumple el requisito)
+        cardImageHTML = `
+          <div class="card-img-container d-flex align-items-center justify-content-center" 
+               style="font-size: 2.6rem; color: #6c757d;">
+            <i class="bi bi-image" aria-hidden="true"></i>
+          </div>
+        `;
       }
       
       // Crear columna de Bootstrap
@@ -1030,8 +1042,7 @@ function showPackageSelection(cardData) {
       
       card.innerHTML = `
         <div class="card-img-container">
-          <img src="${cardImageSrc}" class="card-img-top package-card-image-center" alt="${cardImageAlt}" 
-               onerror="this.src='../Imagenes/carta-placeholder.png'">
+          ${cardImageHTML}
         </div>
         <div class="card-body text-center">
           <h5 class="card-title package-card-name-center">${pkg.nombre}</h5>

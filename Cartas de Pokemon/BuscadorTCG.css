@@ -518,9 +518,6 @@ button:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(145deg, #f8f9fa, #e9ecef);
-  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-  border-radius: 12px 12px 0 0;
   overflow: hidden;
 }
 

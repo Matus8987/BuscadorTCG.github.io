@@ -96,33 +96,69 @@
             <label for="rarezaEspecifica" class="form-label" data-translate="modal.create.rarity">Rareza específica (Opcional)</label>
             <select class="form-select" id="rarezaEspecifica">
               <option value="" data-translate="modal.create.selectRarity">Seleccionar rareza</option>
-              <option value="common">Common</option>
-              <option value="uncommon">Uncommon</option>
-              <option value="rare">Rare</option>
-              <option value="rare holo">Rare Holo</option>
-              <option value="rare holo ex">Rare Holo EX</option>
-              <option value="rare holo gx">Rare Holo GX</option>
-              <option value="rare holo v">Rare Holo V</option>
-              <option value="rare holo vmax">Rare Holo VMAX</option>
+              <!-- Todas las rarezas (estáticas para evitar fetch) -->
+              <option value="common" data-translate="rarity.common">Común</option>
+              <option value="uncommon" data-translate="rarity.uncommon">Poco común</option>
+              <option value="rare" data-translate="rarity.rare">Rara</option>
+              <option value="rareHolo" data-translate="rarity.rareHolo">Rara Holo</option>
+              <option value="rareUltra" data-translate="rarity.rareUltra">Rara Ultra</option>
+              <option value="rareSecret" data-translate="rarity.rareSecret">Rara Secreta</option>
+              <option value="rareRainbow" data-translate="rarity.rareRainbow">Rara Arcoíris</option>
+              <option value="promo" data-translate="rarity.promo">Promocional</option>
+              <option value="unreleased" data-translate="rarity.unreleased">Sin publicar</option>
+              <option value="unknown" data-translate="rarity.unknown">Desconocida</option>
+              <option value="none" data-translate="rarity.none">Ninguna</option>
             </select>
           </div>
           <div class="mb-3">
-            <label for="setEspecifico" class="form-label" data-translate="modal.create.set">Set específico (Opcional)</label>
+            <label for="setEspecifico" class="form-label" data-translate="modal.create.set">Set específico</label>
             <select class="form-select" id="setEspecifico">
+              <!-- Placeholder traducible -->
               <option value="" data-translate="modal.create.selectSet">Seleccionar set (opcional)</option>
-              <option value="Base Set">Base Set</option>
-              <option value="Jungle">Jungle</option>
-              <option value="Fossil">Fossil</option>
-              <option value="Team Rocket">Team Rocket</option>
-              <option value="Gym Heroes">Gym Heroes</option>
-              <option value="Neo Genesis">Neo Genesis</option>
-              <option value="EX Ruby &amp; Sapphire">EX Ruby &amp; Sapphire</option>
-              <option value="Diamond &amp; Pearl">Diamond &amp; Pearl</option>
-              <option value="Black &amp; White">Black &amp; White</option>
-              <option value="XY">XY</option>
-              <option value="Sun &amp; Moon">Sun &amp; Moon</option>
-              <option value="Sword &amp; Shield">Sword &amp; Shield</option>
-              <option value="Scarlet &amp; Violet">Scarlet &amp; Violet</option>
+              <!-- Lista estática de sets (cada opción tiene data-translate="set.<clave>") -->
+              <option value="Base Set" data-translate="set.base_set">Base Set</option>
+              <option value="Jungle" data-translate="set.jungle">Jungle</option>
+              <option value="Fossil" data-translate="set.fossil">Fossil</option>
+              <option value="Team Rocket" data-translate="set.team_rocket">Team Rocket</option>
+              <option value="Gym Heroes" data-translate="set.gym_heroes">Gym Heroes</option>
+              <option value="Gym Challenge" data-translate="set.gym_challenge">Gym Challenge</option>
+              <option value="Neo Genesis" data-translate="set.neo_genesis">Neo Genesis</option>
+              <option value="Neo Discovery" data-translate="set.neo_discovery">Neo Discovery</option>
+              <option value="Neo Revelation" data-translate="set.neo_revelation">Neo Revelation</option>
+              <option value="Neo Destiny" data-translate="set.neo_destiny">Neo Destiny</option>
+              <option value="Legendary Collection" data-translate="set.legendary_collection">Legendary Collection</option>
+              <option value="Expedition" data-translate="set.expedition">Expedition</option>
+              <option value="Aquapolis" data-translate="set.aquapolis">Aquapolis</option>
+              <option value="Skyridge" data-translate="set.skyridge">Skyridge</option>
+              <option value="EX Ruby &amp; Sapphire" data-translate="set.ex_ruby_sapphire">EX Ruby &amp; Sapphire</option>
+              <option value="EX Sandstorm" data-translate="set.ex_sandstorm">EX Sandstorm</option>
+              <option value="EX Dragon" data-translate="set.ex_dragon">EX Dragon</option>
+              <option value="Diamond &amp; Pearl" data-translate="set.diamond_pearl">Diamond &amp; Pearl</option>
+              <option value="Mysterious Treasures" data-translate="set.mysterious_treasures">Mysterious Treasures</option>
+              <option value="Secret Wonders" data-translate="set.secret_wonders">Secret Wonders</option>
+              <option value="Great Encounters" data-translate="set.great_encounters">Great Encounters</option>
+              <option value="Majestic Dawn" data-translate="set.majestic_dawn">Majestic Dawn</option>
+              <option value="Platinum" data-translate="set.platinum">Platinum</option>
+              <option value="HeartGold &amp; SoulSilver" data-translate="set.heartgold_soulsilver">HeartGold &amp; SoulSilver</option>
+              <option value="Call of Legends" data-translate="set.call_of_legends">Call of Legends</option>
+              <option value="Black &amp; White" data-translate="set.black_white">Black &amp; White</option>
+              <option value="XY" data-translate="set.xy">XY</option>
+              <option value="Sun &amp; Moon" data-translate="set.sun_moon">Sun &amp; Moon</option>
+              <option value="Sword &amp; Shield" data-translate="set.sword_shield">Sword &amp; Shield</option>
+              <option value="Scarlet &amp; Violet" data-translate="set.scarlet_violet">Scarlet &amp; Violet</option>
+              <option value="Battle Styles" data-translate="set.battle_styles">Battle Styles</option>
+              <option value="Chilling Reign" data-translate="set.chilling_reign">Chilling Reign</option>
+              <option value="Fusion Strike" data-translate="set.fusion_strike">Fusion Strike</option>
+              <option value="Lost Origin" data-translate="set.lost_origin">Lost Origin</option>
+              <option value="Evolving Skies" data-translate="set.evolving_skies">Evolving Skies</option>
+              <option value="Astral Radiance" data-translate="set.astral_radiance">Astral Radiance</option>
+              <option value="Brilliant Stars" data-translate="set.brilliant_stars">Brilliant Stars</option>
+              <option value="Brilliant Fusion" data-translate="set.brilliant_fusion">Brilliant Fusion</option>
+              <option value="Lost Thunder" data-translate="set.lost_thunder">Lost Thunder</option>
+              <option value="Hidden Fates" data-translate="set.hidden_fates">Hidden Fates</option>
+              <option value="Cosmic Eclipse" data-translate="set.cosmic_eclipse">Cosmic Eclipse</option>
+              <option value="Darkness Ablaze" data-translate="set.darkness_ablaze">Darkness Ablaze</option>
+              <option value="Vivid Voltage" data-translate="set.vivid_voltage">Vivid Voltage</option>
             </select>
           </div>
           <div class="mb-3">

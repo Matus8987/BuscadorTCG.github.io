@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
       botonInicial.addEventListener('click', abrirModalCrearPaquete);
     }
   }
+
+  // Ya no llamamos a populateSetsFromApi() aquí porque los sets están en el HTML
 });
 
 // Función para cerrar sesión
@@ -42,17 +44,13 @@ function logout() {
 // Función para abrir el modal de crear paquete
 function abrirModalCrearPaquete() {
   try {
+    // ya no poblamos sets dinámicamente; el select contiene opciones estáticas en el HTML
     const modalElement = document.getElementById('modalCrearPaquete');
     if (modalElement) {
-      // Añadir animación de entrada
       modalElement.classList.add('fade');
       const modal = getModalInstance(modalElement);
       modal.show();
-      
-      // Después de mostrar el modal, activar la animación
-      setTimeout(() => {
-        modalElement.classList.add('show');
-      }, 10);
+      setTimeout(() => { modalElement.classList.add('show'); }, 10);
     } else {
       console.error('Modal element not found');
     }
@@ -299,20 +297,24 @@ function editarPaquete(paqueteId) {
   document.getElementById('setEspecifico').value = paquete.set || '';
   document.getElementById('tipoPokemon').value = paquete.tipo || '';
 
-  // Cambiar el título del modal a clave traducible
+  // Preparar atributos traducibles y handler del botón ANTES de abrir el modal
   const modalTitle = document.getElementById('modalCrearPaqueteLabel');
   modalTitle.setAttribute('data-translate', 'modal.create.editTitle');
 
-  // Cambiar el texto del botón a clave traducible y asignar handler
   const btnCrear = document.querySelector('#modalCrearPaquete .btn-warning');
   btnCrear.setAttribute('data-translate', 'modal.create.saveChanges');
   btnCrear.onclick = () => guardarCambiosPaquete(paqueteId);
 
-  // Aplicar traducciones y abrir el modal
-  const lang = localStorage.getItem('selectedLanguage') || document.documentElement.lang || 'es';
-  if (typeof updateTranslations === 'function') updateTranslations(lang);
-
+  // Abrir el modal inmediatamente (no esperar a traducciones)
   abrirModalCrearPaquete();
+
+  // Aplicar traducciones asíncronamente para no bloquear la apertura del modal
+  const lang = localStorage.getItem('selectedLanguage') || document.documentElement.lang || 'es';
+  if (typeof updateTranslations === 'function') {
+    setTimeout(() => {
+      try { updateTranslations(lang); } catch (err) { console.error('Error applying translations in editarPaquete:', err); }
+    }, 0);
+  }
 }
 
 // Nueva función para guardar cambios de un paquete editado
@@ -717,4 +719,44 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error applying translations after translator ready:', err);
         }
     });
+});
+
+// Delegación robusta de clicks para botones de crear/editar/eliminar paquetes
+// Asegura que los botones funcionan aunque los elementos se creen dinámicamente
+document.addEventListener('click', function (e) {
+	// Crear paquete (botón principal o dinámico)
+	const crearBtn = e.target.closest('.btn-crear-paquete');
+	if (crearBtn) {
+		e.preventDefault();
+		try { abrirModalCrearPaquete(); } catch (err) { console.error('Error opening create modal:', err); }
+		return;
+	}
+
+	// Editar paquete (botón dentro de la tarjeta)
+	const editarBtn = e.target.closest('.btn-editar-paquete');
+	if (editarBtn) {
+		e.preventDefault();
+		const card = editarBtn.closest('.paquete-card');
+		const id = card ? Number(card.dataset.paqueteId) : null;
+		if (id !== null && !Number.isNaN(id)) {
+			try { editarPaquete(id); } catch (err) { console.error('Error opening edit modal for package', id, err); }
+		} else {
+			console.warn('Editar paquete: id no encontrado en el DOM');
+		}
+		return;
+	}
+
+	// Eliminar paquete (botón dentro de la tarjeta)
+	const eliminarBtn = e.target.closest('.btn-eliminar-paquete');
+	if (eliminarBtn) {
+		e.preventDefault();
+		const card = eliminarBtn.closest('.paquete-card');
+		const id = card ? Number(card.dataset.paqueteId) : null;
+		if (id !== null && !Number.isNaN(id)) {
+			try { eliminarPaquete(id); } catch (err) { console.error('Error deleting package', id, err); }
+		} else {
+			console.warn('Eliminar paquete: id no encontrado en el DOM');
+		}
+		return;
+	}
 });
