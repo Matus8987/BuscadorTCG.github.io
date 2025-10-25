@@ -385,6 +385,22 @@
 
 		        if (typeof document === 'undefined') return;
 
+		        // Guardar valores actuales de campos con id (no se persisten en storage, sólo en memoria)
+		        const preserved = [];
+		        try {
+		            const inputs = document.querySelectorAll('input[id], textarea[id], select[id]');
+		            inputs.forEach(el => {
+		                const record = { id: el.id, tag: el.tagName.toLowerCase(), type: el.type || '', value: el.value };
+		                // incluir estado checked para checkbox/radio
+		                if (el.type === 'checkbox' || el.type === 'radio') {
+		                    record.checked = el.checked;
+		                }
+		                preserved.push(record);
+		            });
+		        } catch (err) {
+		            console.warn('Error preservando valores de campos:', err);
+		        }
+
 		        // Actualizar textos con data-translate
 		        const elements = document.querySelectorAll('[data-translate]');
 		        elements.forEach(element => {
@@ -441,6 +457,26 @@
 
 		        // Actualizar options de tipos de Pokémon
 		        updatePokemonTypes(lang);
+
+		        // Restaurar valores preservados
+		        try {
+		            preserved.forEach(rec => {
+		                const el = document.getElementById(rec.id);
+		                if (!el) return;
+		                if (rec.tag === 'select') {
+		                    // intentar restaurar la selección (valor)
+		                    el.value = rec.value;
+		                } else if (rec.type === 'checkbox' || rec.type === 'radio') {
+		                    el.checked = !!rec.checked;
+		                } else {
+		                    // campos de texto/contraseña/textarea
+		                    el.value = rec.value;
+		                }
+		            });
+		        } catch (err) {
+		            console.warn('Error restaurando valores de campos:', err);
+		        }
+
 		    } catch (err) {
 		        console.error('Error in updateTranslations:', err);
 		    }

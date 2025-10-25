@@ -130,6 +130,14 @@ function updatePackageCountAndList() {
 
   // Reemplazar contenido del contenedor noCartas por la lista
   noCartasDiv.innerHTML = ''; // limpiar
+
+  // Agregar título visible solo cuando hay paquetes creados
+  const titulo = document.createElement('h3');
+  titulo.className = 'titulo-paquetes';
+  titulo.setAttribute('data-translate', 'profile.createdPacks');
+  titulo.textContent = 'Paquetes Creados';
+  noCartasDiv.appendChild(titulo);
+
   noCartasDiv.appendChild(listContainer);
 
   // Reaplicar traducciones si el traductor ya está cargado

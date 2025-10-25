@@ -2,7 +2,7 @@
 
 /* Fondo y tipografía: usar el mismo fondo que la página de búsqueda */
 body {
-  background-image: url('../Imagenes/FondoOscuroCartas.png');
+  background-image: url('../Imagenes/FondoOscuroTrivia.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
